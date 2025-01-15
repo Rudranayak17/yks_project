@@ -10,6 +10,8 @@ const Layout = () => {
     }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="registration" options={{ headerShown: false }} />
+      <Stack.Screen name="addDetail" options={{ headerShown: false }} />
+      <Stack.Screen name="addmoreDetail" options={{ headerShown: false }} />
     </Stack>
   );
 };

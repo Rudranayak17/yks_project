@@ -16,37 +16,57 @@ import SubmitButton from "../../components/Submit";
 import { useRouter } from "expo-router";
 import Animated, { FadeIn, FadeOut, Easing } from "react-native-reanimated";
 import { useLoginMutation } from "@/store/api/auth";
+import { showToast } from "@/utils/ShowToast";
+import { setCredentials } from "@/store/reducer/auth";
+import { useDispatch } from "react-redux";
 
 const Index: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [login]=useLoginMutation();
+  const [login, { data, isLoading }] = useLoginMutation();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useRouter();
-
+  const dispatch = useDispatch();
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Validation", "Please fill in both email and password.");
       return;
     }
-  
+
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!emailRegex.test(email)) {
       Alert.alert("Invalid Email", "Please enter a valid email address.");
       return;
     }
-  
+
     setLoading(true); // Start loading
     try {
       const resp = await login({ email, password }).unwrap();
+      if (resp.STS === "200") {
+        showToast({
+          message: "user login successfully",
+          backgroundColor: "green",
+        });
+        dispatch(setCredentials(data!));
+        // return navigate.push("/(protected)/(tabs)/explore");
+      } else if (resp.STS === "500") {
+        showToast({
+          message: resp.MSG || "An error occurred while logging in.",
+          backgroundColor: "red",
+        });
+      }
+
       console.log("Login Response:", JSON.stringify(resp, null, 2));
     } catch (error) {
+      showToast({
+        message: "An error occurred while logging in.",
+        backgroundColor: "red",
+      });
       console.error("Login Error:", JSON.stringify(error, null, 2));
     } finally {
       setLoading(false); // End loading
     }
   };
-  
 
   return (
     <ThemedView style={styles.container}>
@@ -116,7 +136,11 @@ const Index: React.FC = () => {
             entering={FadeIn.duration(400).delay(1000).easing(Easing.ease)}
             exiting={FadeOut.duration(300)}
           >
-            <SubmitButton title="SIGN IN" onPress={handleLogin} loading={loading} />
+            <SubmitButton
+              title="SIGN IN"
+              onPress={handleLogin}
+              loading={loading}
+            />
           </Animated.View>
 
           <Animated.View

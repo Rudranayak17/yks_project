@@ -10,6 +10,14 @@ export interface User {
   phone?: string;
   address?: string;
 }
+export interface CONTENT {
+token?: string;
+username: string;
+userId:number|string;
+fullName:string;
+UserRole:string;
+userProfile:string;
+}
 export interface contact{
   name: string;
   email: string;

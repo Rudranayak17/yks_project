@@ -38,6 +38,7 @@ const Registration: React.FC = () => {
   const handleSignup = () => {
     if (validateForm()) {
       console.log("Signup Attempt:", { email, password, name, phone, gender });
+      navigate.navigate({pathname:"/(auth)/addDetail", params: { email, password, name, phone}})
       // Add your actual signup logic here (API call, etc.)
     }
   };

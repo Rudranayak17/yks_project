@@ -1,19 +1,29 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack, useRouter, useSegments } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack, useRouter, useSegments } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import "react-native-reanimated";
+import { RootSiblingParent } from "react-native-root-siblings";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { ActivityIndicator } from 'react-native';
-import { ThemedView } from '@/components/ThemedView';
-import { Provider, useDispatch, useSelector } from 'react-redux';
-import { useUserDetailQuery } from '@/store/initalState';
-import { authError, selectCurrentIsAuth, selectCurrentLoading, setCredentials } from '@/store/reducer/auth';
-import { useGetMyProfileQuery } from '@/store/api/auth';
-import { store } from '@/store/store';
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { ActivityIndicator } from "react-native";
+import { ThemedView } from "@/components/ThemedView";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { useUserDetailQuery } from "@/store/initalState";
+import {
+  authError,
+  selectCurrentIsAuth,
+  selectCurrentLoading,
+  setCredentials,
+} from "@/store/reducer/auth";
+import { useGetMyProfileQuery } from "@/store/api/auth";
+import { store } from "@/store/store";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -26,8 +36,10 @@ const StackLayout = () => {
   const { data, isLoading } = useGetMyProfileQuery();
 
   useEffect(() => {
+    
     if (data) {
-      dispatch(setCredentials({ user:data.user }));
+      dispatch(setCredentials(data));
+      console.log("User Data:", JSON.stringify(data, null, 2));
     } else if (!isLoading) {
       dispatch(authError());
     }
@@ -35,7 +47,7 @@ const StackLayout = () => {
 
   useEffect(() => {
     const inProtectedGroup = segments[0] === "(protected)";
-    
+
     // If not authenticated and in protected group, redirect to login
     if (!isAuth && inProtectedGroup) {
       router.replace("/"); // Redirect to authentication flow
@@ -60,7 +72,7 @@ const StackLayout = () => {
 
   return (
     <Stack>
-    <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
       <Stack.Screen name="+not-found" />
     </Stack>
@@ -69,7 +81,7 @@ const StackLayout = () => {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   useEffect(() => {
@@ -84,10 +96,14 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
- <StackLayout />
-      <StatusBar style="auto" />
-    </ThemeProvider>
+      <RootSiblingParent>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <StackLayout />
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </RootSiblingParent>
     </Provider>
   );
 }

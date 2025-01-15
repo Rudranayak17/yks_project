@@ -1,26 +1,25 @@
 
-import { User } from "./user";
+import { CONTENT, User } from "./user";
 
 export interface AuthState {
   token: string | null;
   message: string | null;
   isLoading: boolean;
-  user: User | null;
+  user: CONTENT | null;
   isAuthenticated: boolean;
 }
 
 export interface CredentialsPayload {
-  token?: string;
-  message?: string;
-  user: User | null;
+  STS:string;
+  MSG:string;
+  CONTENT:CONTENT
 }
 
 // Response returned after user authentication or registration
 export type UserResponse = {
-  message?: string;
-  success?: boolean;
-  user: User;
-  token?: string;
+STS:string;
+MSG:string;
+CONTENT:CONTENT
 };
 export type DataResponse = {
   message?: string;

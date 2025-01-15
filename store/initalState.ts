@@ -25,8 +25,9 @@ export const getToken = async () => {
 const baseQuery = fetchBaseQuery({
   baseUrl: SERVER_URL as string,
   credentials: "include", // Ensures cookies are sent if needed
-  prepareHeaders: (headers) => {
-    const token = getToken();
+  prepareHeaders: async(headers) => {
+    const token = await getToken();
+    console.log(token); // Make sure this prints the token
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }
