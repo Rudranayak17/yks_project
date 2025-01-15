@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import { useRouter } from "expo-router";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import Animated, { FadeIn, FadeOut, Easing } from "react-native-reanimated";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -18,23 +19,53 @@ import CustomTextInput from "@/components/CustomTextInput";
 import SubmitButton from "@/components/Submit";
 
 const AddDetail: React.FC = () => {
+  const local = useLocalSearchParams();
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     designation: "",
     phone: "",
     whatsappNo: "",
-    vote: "", // Add vote field
+    vote: "",
+    anniversaryDate: "", // Add anniversaryDate field
   });
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const router = useRouter();
+  // Redirect if local params are missing
+  useEffect(() => {
+    const requiredFields = ["email", "name", "password"];
+    const missingFields = requiredFields.filter((field) => !local[field]);
+
+    if (missingFields.length > 0) {
+      Alert.alert(
+        "Missing Information",
+        "Some required details are missing. Please sign up first.",
+        [
+          {
+            text: "OK",
+            onPress: () => router.replace("/(auth)/registration"), // Replace with your signup route
+          },
+        ]
+      );
+    }
+  }, [local, router]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const validateForm = () => {
-    const { designation, phone, whatsappNo, vote } = formData;
+  const handleDateChange = (event: any, selectedDate: Date | undefined) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      const formattedDate = selectedDate.toLocaleDateString("en-GB"); // Format as dd/mm/yyyy
+      handleInputChange("anniversaryDate", formattedDate);
+    }
+  };
 
-    if (!designation || !phone || !whatsappNo || !vote) {
+  const validateForm = () => {
+    const { designation, phone, whatsappNo, vote, anniversaryDate } = formData;
+
+    if (!designation || !phone || !whatsappNo || !vote || !anniversaryDate) {
       Alert.alert("Error", "Please fill out all required fields.");
       return false;
     }
@@ -44,11 +75,9 @@ const AddDetail: React.FC = () => {
 
   const handleSignup = () => {
     if (validateForm()) {
+      console.log({ ...local, ...formData });
+      router.navigate({pathname:"/addmoreDetail",params:{...local, ...formData}});
       // Add actual signup logic here (e.g., API call)
-      router.navigate({
-        pathname: "/(auth)/addDetail",
-        params: {},
-      });
     }
   };
 
@@ -123,6 +152,24 @@ const AddDetail: React.FC = () => {
                 </TouchableOpacity>
               ))}
             </View>
+
+            <ThemedText style={styles.label}>Anniversary Date</ThemedText>
+            <TouchableOpacity
+              onPress={() => setShowDatePicker(true)}
+              style={styles.datePicker}
+            >
+              <ThemedText>
+                {formData.anniversaryDate || "Select Anniversary Date"}
+              </ThemedText>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                value={new Date()}
+                mode="date"
+                display="default"
+                onChange={handleDateChange}
+              />
+            )}
           </View>
         </Animated.View>
 
@@ -136,8 +183,7 @@ const AddDetail: React.FC = () => {
       </ScrollView>
     </KeyboardAvoidingView>
   );
-};
-
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -163,6 +209,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   radioContainer: {
+    paddingHorizontal:7,
     flexDirection: "column",
     alignItems: "flex-start",
     paddingVertical: 10,
@@ -191,6 +238,13 @@ const styles = StyleSheet.create({
   },
   radioLabel: {
     fontSize: 16,
+  },
+  datePicker: {
+    padding: 15,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    marginTop: 10,
   },
 });
 

@@ -20,7 +20,7 @@ const Registration: React.FC = () => {
   const navigate = useRouter();
 
   const validateForm = () => {
-    if (!email || !password || !name || !phone || !gender) {
+    if (!email || !password || !name  || !gender) {
       Alert.alert("Error", "Please fill out all fields.");
       console.log("gender", gender);
       return false;
@@ -38,7 +38,9 @@ const Registration: React.FC = () => {
   const handleSignup = () => {
     if (validateForm()) {
       console.log("Signup Attempt:", { email, password, name, phone, gender });
-      navigate.navigate({pathname:"/(auth)/addDetail", params: { email, password, name, phone}})
+      navigate.navigate({pathname:"/(auth)/addDetail", 
+        params: { email, password, name}
+      })
       // Add your actual signup logic here (API call, etc.)
     }
   };
@@ -77,13 +79,13 @@ const Registration: React.FC = () => {
                 placeholder="Enter your full name"
               />
 
-              <ThemedText style={styles.label}>Phone Number</ThemedText>
+              {/* <ThemedText style={styles.label}>Phone Number</ThemedText>
               <CustomTextInput
                 value={phone}
                 onChangeText={setPhone}
                 keyboardType="phone-pad"
                 placeholder="Enter your phone number"
-              />
+              /> */}
 
               <ThemedText style={styles.label}>Email Address</ThemedText>
               <EmailInput
