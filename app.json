@@ -9,7 +9,22 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.quickhire.yks",  
+      "buildNumber": "1",  
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera for scanning QR codes.", 
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to provide better service." 
+      },
+      "icons": {
+        "icon": "./assets/images/icon.png", 
+        "iosIcon": "./assets/images/ios-icon.png"
+      },
+      "launchScreen": {
+        "backgroundColor": "#ffffff", 
+        "image": "./assets/images/splash-icon.png",
+        "resizeMode": "contain" 
+      }
     },
     "android": {
       "adaptiveIcon": {
