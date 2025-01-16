@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { View, StyleSheet, Alert, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import Animated, { FadeIn, FadeOut, Easing } from "react-native-reanimated";
-import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import EmailInput from "@/components/EmailInput";
 import PasswordInput from "@/components/PasswordInput";

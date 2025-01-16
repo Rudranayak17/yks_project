@@ -35,40 +35,40 @@ const StackLayout = () => {
   const dispatch = useDispatch();
   const { data, isLoading } = useGetMyProfileQuery();
 
-  useEffect(() => {
+  // useEffect(() => {
     
-    if (data) {
-      dispatch(setCredentials(data));
-      console.log("User Data:", JSON.stringify(data, null, 2));
-    } else if (!isLoading) {
-      dispatch(authError());
-    }
-  }, [data, isLoading, dispatch]);
+  //   if (data) {
+  //     dispatch(setCredentials(data));
+  //     console.log("User Data:", JSON.stringify(data, null, 2));
+  //   } else if (!isLoading) {
+  //     dispatch(authError());
+  //   }
+  // }, [data, isLoading, dispatch]);
 
-  useEffect(() => {
-    const inProtectedGroup = segments[0] === "(protected)";
+  // useEffect(() => {
+  //   const inProtectedGroup = segments[0] === "(protected)";
 
-    // If not authenticated and in protected group, redirect to login
-    if (!isAuth && inProtectedGroup) {
-      router.replace("/"); // Redirect to authentication flow
-    }
+  //   // If not authenticated and in protected group, redirect to login
+  //   if (!isAuth && inProtectedGroup) {
+  //     router.replace("/"); // Redirect to authentication flow
+  //   }
 
-    // If authenticated, always send to the home page
-    if (isAuth && !inProtectedGroup) {
-      router.replace("/(protected)/(tabs)/explore"); // Redirect to home
-    }
-  }, [isAuth, segments, router]);
+  //   // If authenticated, always send to the home page
+  //   if (isAuth && !inProtectedGroup) {
+  //     router.replace("/(protected)/(tabs)/explore"); // Redirect to home
+  //   }
+  // }, [isAuth, segments, router]);
 
-  // While loading auth state, show a loading indicator
-  if (isAuthLoading) {
-    return (
-      <ThemedView
-        style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-      >
-        <ActivityIndicator size="large" />
-      </ThemedView>
-    );
-  }
+  // // While loading auth state, show a loading indicator
+  // if (isAuthLoading) {
+  //   return (
+  //     <ThemedView
+  //       style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+  //     >
+  //       <ActivityIndicator size="large" />
+  //     </ThemedView>
+  //   );
+  // }
 
   return (
     <Stack>
