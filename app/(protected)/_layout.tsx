@@ -2,19 +2,17 @@ import { View, Text } from "react-native";
 import React from "react";
 import { Stack } from "expo-router";
 
-const _layout = () => {
+const layout = () => {
   return (
     <Stack
-    screenOptions={{
-      animation: "slide_from_right"
-    }}
+      screenOptions={{
+        headerShown: false,
+      }}
     >
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="(pages)" options={{ headerShown: false }} />
-      
-
+      <Stack.Screen name="(tabs)" options={{ headerShown: false, title: '' }} />
+      <Stack.Screen name="(pages)" options={{ headerShown: false, title: '' }} />
     </Stack>
   );
 };
 
-export default _layout;
+export default layout;

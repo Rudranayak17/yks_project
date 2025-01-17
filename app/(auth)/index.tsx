@@ -32,41 +32,50 @@ const Index: React.FC = () => {
       Alert.alert("Validation", "Please fill in both email and password.");
       return;
     }
-
+  
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!emailRegex.test(email)) {
       Alert.alert("Invalid Email", "Please enter a valid email address.");
       return;
     }
-
+  
     setLoading(true); // Start loading
     try {
-      const resp = await login({ email, password }).unwrap();
-      if (resp.STS === "200") {
+      const resp = await login({ email, password });
+      console.log("resp", resp?.data); // Ensure resp and data are defined
+  
+      if (resp?.data) {
+        const { STS, MSG } = resp.data;
+        if (STS === "200") {
+          showToast({
+            message: "User login successfully",
+            backgroundColor: "green",
+          });
+          dispatch(setCredentials(resp.data)); // Use resp.data instead of data!
+          return navigate.replace("/(protected)/(tabs)");
+        } else if (STS === "500") {
+          showToast({
+            message: MSG || "An error occurred while logging in.",
+            backgroundColor: "red",
+          });
+        }
+      } else {
         showToast({
-          message: "user login successfully",
-          backgroundColor: "green",
-        });
-        dispatch(setCredentials(data!));
-        // return navigate.push("/(protected)/(tabs)/explore");
-      } else if (resp.STS === "500") {
-        showToast({
-          message: resp.MSG || "An error occurred while logging in.",
+          message: "Unexpected response format.",
           backgroundColor: "red",
         });
       }
-
-      console.log("Login Response:", JSON.stringify(resp, null, 2));
     } catch (error) {
       showToast({
         message: "An error occurred while logging in.",
         backgroundColor: "red",
       });
-      console.error("Login Error:", JSON.stringify(error, null, 2));
+      console.error("Login Error:", error);
     } finally {
       setLoading(false); // End loading
     }
   };
+  
 
   return (
     <ThemedView style={styles.container}>
