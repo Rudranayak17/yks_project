@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, useRouter, useSegments } from "expo-router";
+import { Stack, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -33,8 +33,11 @@ const StackLayout = () => {
   const segments = useSegments();
   const router = useRouter();
   const dispatch = useDispatch();
+  const pathname =usePathname()
   const { data, isLoading } = useGetMyProfileQuery();
-
+  useEffect(() => {
+    console.log(pathname);
+  }, [pathname]);
   // useEffect(() => {
     
   //   if (data) {
@@ -83,6 +86,7 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+
 
   useEffect(() => {
     if (loaded) {
