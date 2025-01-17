@@ -125,6 +125,7 @@ const Index: React.FC = () => {
                     color: "#007BFF",
                     textDecorationLine: "underline",
                   }}
+                  onPress={()=>navigate.navigate("/forgetPasword")}
                 >
                   Forget password ?
                 </ThemedText>

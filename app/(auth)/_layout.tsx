@@ -9,6 +9,9 @@ const Layout = () => {
       
     }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="createResetPassword" options={{ headerShown: false }} />
+      <Stack.Screen name="verifyOTP" options={{ headerShown: false }} />
+      <Stack.Screen name="forgetPasword" options={{ headerShown: false }} />
       <Stack.Screen name="addProfile" options={{ headerShown: false }} />
       <Stack.Screen name="addDateBirth" options={{ headerShown: false }} />
       <Stack.Screen name="registration" options={{ headerShown: false }} />
