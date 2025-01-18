@@ -5,11 +5,13 @@ import { ThemedText } from '@/components/ThemedText';
 import { EvilIcons } from '@expo/vector-icons';
 import SubmitButton from '@/components/Submit';
 import * as ImagePicker from 'expo-image-picker';
+import { useNavigation, useRouter } from 'expo-router';
 
 const AddProfile = () => {
+  const navigation=useRouter()
   const [profileImage, setProfileImage] = useState<string | null>(null);
 const submitHandler=()=>{
-    
+    navigation.replace("/")
 }
   const handleImagePick = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();

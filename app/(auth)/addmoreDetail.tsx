@@ -83,7 +83,7 @@ const AddMoreDetail: React.FC = () => {
   const handleSignup = () => {
     if (validateForm()) {
       console.log({ ...local, ...formData });
-      router.navigate({ pathname: "/addmoreDetail", params: { ...local, ...formData } });
+      router.navigate({ pathname: "/(auth)/addDateBirth", params: { data:{...local, ...formData} } });
     }
   };
 
