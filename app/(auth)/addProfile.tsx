@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
-import { EvilIcons } from '@expo/vector-icons';
-import SubmitButton from '@/components/Submit';
-import * as ImagePicker from 'expo-image-picker';
-import { useNavigation, useRouter } from 'expo-router';
+import React, { useState } from "react";
+import { View, StyleSheet, Image, TouchableOpacity, Text } from "react-native";
+
+import { EvilIcons } from "@expo/vector-icons";
+import SubmitButton from "@/components/Submit";
+import * as ImagePicker from "expo-image-picker";
+import { useNavigation, useRouter } from "expo-router";
 
 const AddProfile = () => {
-  const navigation=useRouter()
+  const navigation = useRouter();
   const [profileImage, setProfileImage] = useState<string | null>(null);
-const submitHandler=()=>{
-    navigation.replace("/")
-}
+  const submitHandler = () => {
+    navigation.replace("/");
+  };
   const handleImagePick = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissionResult.granted) {
       alert("Permission to access the library is required!");
       return;
@@ -33,8 +33,8 @@ const submitHandler=()=>{
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title">Complete your Profile</ThemedText>
+    <View style={styles.container}>
+      <Text style={styles.title}>Complete your Profile</Text>
       <TouchableOpacity onPress={handleImagePick} style={styles.imageContainer}>
         {profileImage ? (
           <Image source={{ uri: profileImage }} style={styles.profileImage} />
@@ -42,34 +42,48 @@ const submitHandler=()=>{
           <EvilIcons name="user" size={150} color="black" style={styles.icon} />
         )}
       </TouchableOpacity>
-      <ThemedText type="subtitle">Add Profile Photo</ThemedText>
-      <ThemedText>Add a photo so that your friends know it's you</ThemedText>
+      <Text style={styles.subtitle}>Add Profile Photo</Text>
+      <Text style={styles.subtitle}>
+        Add a photo so that your friends know it's you
+      </Text>
       <SubmitButton title="Next" onPress={submitHandler} />
-    </ThemedView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#6c757d",
+    marginBottom: 16,
+    textAlign: "center",
   },
   imageContainer: {
     marginVertical: 20,
     width: 150,
     height: 150,
     borderRadius: 75,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 2,
-    borderColor: 'gray',
+    borderColor: "gray",
   },
   profileImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   icon: {
     marginVertical: 10,

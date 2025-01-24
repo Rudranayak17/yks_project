@@ -8,28 +8,32 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SERVER_URL = "https://yks.up.railway.app";
-console.log(SERVER_URL); // Make sure this prints the correct URL
+console.log(SERVER_URL); // Debug: Ensure the correct server URL is printed
 
-// Function to get token from localStorage
-export const getToken = async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      return token;
-    } catch (error) {
-      console.error("Error getting token:", error);
-      return null;
-    }
-  };
+// Function to retrieve the token from AsyncStorage
+const getToken = async (): Promise<string | null> => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    return token;
+  } catch (error) {
+    console.error("Error retrieving token:", error);
+    return null;
+  }
+};
 
 // Base query with token preparation
 const baseQuery = fetchBaseQuery({
-  baseUrl: SERVER_URL as string,
-  credentials: "include", // Ensures cookies are sent if needed
-  prepareHeaders: async(headers) => {
-    const token = await getToken();
-    console.log(token); // Make sure this prints the token
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
+  baseUrl: SERVER_URL,
+  credentials: "include", // Includes cookies in requests, if necessary
+  prepareHeaders: async (headers) => {
+    try {
+      const token = await getToken();
+      console.log("Token:", token); // Debug: Print the token for verification
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+    } catch (error) {
+      console.error("Error preparing headers:", error);
     }
     return headers;
   },
@@ -44,6 +48,7 @@ export const apiSlice = createApi({
     {}
   >,
   endpoints: (builder) => ({
+    // Example endpoint to fetch user details
     userDetail: builder.query({
       query: () => ({
         url: "/",
@@ -52,10 +57,9 @@ export const apiSlice = createApi({
           "Content-Type": "application/json",
         },
       }),
-
     }),
   }),
 });
 
-// Export hooks for usage in components
+// Export hooks for API slice endpoints
 export const { useUserDetailQuery } = apiSlice;

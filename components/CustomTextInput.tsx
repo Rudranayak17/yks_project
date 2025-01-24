@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, TextInput, TextInputProps, StyleSheet } from "react-native";
-import { ThemedView } from "./ThemedView";
+
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface CustomTextInputProps extends TextInputProps {
@@ -18,7 +18,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   onChangeText,
   placeholder = "Enter text",
   backgroundColor = "white",
-  borderColor = "#ccc",
+  borderColor = "#000",
   borderRadius = 8,
   shadowEnabled = true,
   ...props
@@ -42,7 +42,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   };
 
   return (
-    <ThemedView style={[styles.container]}>
+    <View style={[styles.container]}>
       <TextInput
         style={[
           styles.input,
@@ -51,7 +51,6 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
             backgroundColor,
             borderColor: getBorderColor(),
             borderRadius,
-            ...(shadowEnabled ? styles.shadow : {}),
           },
         ]}
         placeholderTextColor="gray"
@@ -63,7 +62,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
         onBlur={() => setIsFocused(false)}
         {...props}
       />
-    </ThemedView>
+    </View>
   );
 };
 
@@ -75,15 +74,6 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     borderWidth: 2,
-  },
-  shadow: {
-    // iOS shadow
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.5,
-    // Android shadow
-    elevation: 5,
   },
 });
 

@@ -9,12 +9,12 @@ import {
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import PostComponent from "@/components/PostComponent";
-import { useColorScheme } from "@/hooks/useColorScheme.web";
+
 
 const AnotherPage: React.FC = () => {
-  const colorScheme = useColorScheme();
-  const borderColor = colorScheme === "dark" ? "white" : "#ccc";
-  const colors = colorScheme === "dark" ? "white" : "black";
+
+  const borderColor = "#000"
+  const colors ="000"
 
   // Sample data for the posts
   const data = [

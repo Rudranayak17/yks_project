@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  TextInput,
-  TextInputProps,
-  StyleSheet,
-} from "react-native";
-import { ThemedView } from "./ThemedView";
+import { View, TextInput, TextInputProps, StyleSheet } from "react-native";
 
 interface EmailInputProps extends TextInputProps {
   value: string;
@@ -21,54 +15,48 @@ const EmailInput: React.FC<EmailInputProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const [isValid, setIsValid] = useState(true);
 
+  // Email validation function
   const validateEmail = (text: string) => {
-    // Simple email validation regex
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    setIsValid(emailRegex.test(text));
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple regex for email validation
+    const isValidEmail = emailRegex.test(text);
+    setIsValid(isValidEmail);
     onChangeText(text);
   };
 
-  const getBorderColor = () => {
-    if (isFocused) return "blue";
-    if (value && !isValid) return "red";
-    if (value && isValid) return "green";
-    return "gray";
-  };
+  // Determine the border color based on input state
+  const borderColor = isFocused
+    ? "blue"
+    : !isValid && value
+    ? "red"
+    : value && isValid
+    ? "green"
+    : "gray";
 
   return (
-    <ThemedView style={styles.inputContainer}>
+    <View>
       <TextInput
-        style={[styles.input, { borderColor: getBorderColor() }]}
+        style={[styles.input, { borderColor }]}
         placeholder={placeholder}
         placeholderTextColor="gray"
-        onChangeText={validateEmail}
-        value={value}
         keyboardType="email-address"
         autoCapitalize="none"
+        value={value}
+        onChangeText={validateEmail}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         {...props}
       />
-    </ThemedView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  inputContainer: {
-    marginVertical: 10,
-  },
   input: {
-    backgroundColor: "white",
     borderRadius: 8,
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 7,
     fontSize: 16,
     borderWidth: 2,
-    // Shadow for aesthetics
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.5,
-    elevation: 5,
   },
 });
 

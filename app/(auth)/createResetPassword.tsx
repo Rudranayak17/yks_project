@@ -4,17 +4,16 @@ import {
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
-  TextInput,
+  Text,
   Platform,
   Dimensions,
 } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
+
 import SubmitButton from "../../components/Submit";
 import { useRouter } from "expo-router";
 import Animated, { FadeIn, FadeOut, Easing } from "react-native-reanimated";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import CustomTextInput from "@/components/CustomTextInput";
+
 import PasswordInput from "@/components/PasswordInput";
 
 const { width } = Dimensions.get("window"); // Get screen width
@@ -42,10 +41,11 @@ const CreateResetPassword: React.FC = () => {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
@@ -56,12 +56,12 @@ const CreateResetPassword: React.FC = () => {
             exiting={FadeOut.duration(300)}
           >
             <View>
-              <ThemedText type="title" style={styles.centerText}>
+              <Text style={[styles.centerText, styles.title]}>
                 Create New Password
-              </ThemedText>
-              <ThemedText type="defaultSemiBold" style={styles.centerText}>
+              </Text>
+              <Text style={[styles.centerText, styles.subtitle]}>
                 Please enter your new password and confirm it.
-              </ThemedText>
+              </Text>
             </View>
           </Animated.View>
 
@@ -79,12 +79,10 @@ const CreateResetPassword: React.FC = () => {
               <PasswordInput
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
-                placeholder="Enter New Password"
+                placeholder="Enter confirm Password"
               />
               {!passwordMatch && (
-                <ThemedText type="defaultSemiBold" style={styles.errorText}>
-                  Passwords do not match.
-                </ThemedText>
+                <Text style={styles.errorText}>Passwords do not match.</Text>
               )}
             </View>
           </Animated.View>
@@ -101,13 +99,14 @@ const CreateResetPassword: React.FC = () => {
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </ThemedView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
     paddingHorizontal: 10,
   },
   scrollContainer: {
@@ -122,6 +121,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginVertical: 20,
+    gap: 13,
   },
   input: {
     width: width * 0.8, // Set width relative to the screen size
@@ -132,6 +132,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 10,
     paddingLeft: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "gray",
   },
   errorText: {
     color: "red",

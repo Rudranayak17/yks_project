@@ -1,10 +1,7 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 
-// Define the GenderInput component
 interface GenderInputProps {
   value: string | undefined; // Ensure the value can be a string or undefined
   onChange: (value: string) => void;
@@ -12,20 +9,22 @@ interface GenderInputProps {
 
 const GenderInput: React.FC<GenderInputProps> = ({ value = "", onChange }) => {
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText style={styles.label}>Gender</ThemedText>
-      <Picker
-        selectedValue={value || ""} // Ensure the value defaults to an empty string if undefined
-        onValueChange={onChange}
-        style={styles.input}
-        mode="dropdown"
-      >
-        <Picker.Item label="Select Gender" value="" />
-        <Picker.Item label="Male" value="male" />
-        <Picker.Item label="Female" value="female" />
-        <Picker.Item label="Other" value="other" />
-      </Picker>
-    </ThemedView>
+    <View style={styles.container}>
+      <Text style={styles.label}>Gender</Text>
+      <View style={styles.pickerWrapper}>
+        <Picker
+          selectedValue={value || ""} // Ensure the value defaults to an empty string if undefined
+          onValueChange={onChange}
+          style={styles.input}
+          mode="dropdown"
+        >
+          <Picker.Item label="Select Gender" value="" />
+          <Picker.Item label="Male" value="male" />
+          <Picker.Item label="Female" value="female" />
+          <Picker.Item label="Other" value="other" />
+        </Picker>
+      </View>
+    </View>
   );
 };
 
@@ -37,15 +36,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 8,
   },
-  input: {
-    // height: 40,
-    // padding: 10,
+  pickerWrapper: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#000",
     borderRadius: 5,
+  },
+  input: {
     fontSize: 16,
     paddingLeft: 10,
-    color: "white",
+    color: "black",
   },
 });
 

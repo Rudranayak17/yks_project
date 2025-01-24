@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Alert, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+} from "react-native";
 import { useRouter } from "expo-router";
 import Animated, { FadeIn, FadeOut, Easing } from "react-native-reanimated";
-import { ThemedText } from "@/components/ThemedText";
+
 import EmailInput from "@/components/EmailInput";
 import PasswordInput from "@/components/PasswordInput";
 import CustomTextInput from "@/components/CustomTextInput";
@@ -13,15 +21,13 @@ const Registration: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [name, setName] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
   const [gender, setGender] = useState<string>("");
 
   const navigate = useRouter();
 
   const validateForm = () => {
-    if (!email || !password || !name  || !gender) {
+    if (!email || !password || !name || !gender) {
       Alert.alert("Error", "Please fill out all fields.");
-      console.log("gender", gender);
       return false;
     }
 
@@ -35,13 +41,13 @@ const Registration: React.FC = () => {
   };
 
   const handleSignup = () => {
-    if (validateForm()) {
-      console.log("Signup Attempt:", { email, password, name, phone, gender });
-      navigate.navigate({pathname:"/(auth)/addDetail", 
-        params: { email, password, name}
-      })
-      // Add your actual signup logic here (API call, etc.)
-    }
+    // if (validateForm()) {
+      console.log("Signup Attempt:", { email, password, name, gender });
+      navigate.navigate({
+        pathname: "/(auth)/addDetail",
+        params: { email, password, name },
+      });
+    // }
   };
 
   return (
@@ -50,92 +56,77 @@ const Registration: React.FC = () => {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-      
-          <Animated.View
-            entering={FadeIn.duration(400).easing(Easing.ease)}
-            exiting={FadeOut.duration(300)}
-          >
-            <View style={styles.header}>
-              <ThemedText type="title" style={styles.centerText}>
-                Sign Up
-              </ThemedText>
-              <ThemedText type="defaultSemiBold" style={styles.centerText}>
-                Fill your information below to create an account
-              </ThemedText>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <Animated.View
+          entering={FadeIn.duration(400).easing(Easing.ease)}
+          exiting={FadeOut.duration(300)}
+        >
+          <View style={styles.header}>
+            <Text style={styles.title}>Create Account</Text>
+            <Text style={styles.subtitle}>
+              Fill in the details below to get started
+            </Text>
+          </View>
+        </Animated.View>
+
+        <Animated.View
+          entering={FadeIn.duration(400).delay(200).easing(Easing.ease)}
+          exiting={FadeOut.duration(300)}
+        >
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Full Name</Text>
+            <CustomTextInput
+              value={name}
+              onChangeText={setName}
+              placeholder="Enter your full name"
+            />
+
+            <Text style={styles.label}>Email Address</Text>
+            <EmailInput
+              value={email}
+              onChangeText={setEmail}
+              placeholder="example@gmail.com"
+            />
+
+            <Text style={styles.label}>Password</Text>
+            <PasswordInput
+              value={password}
+              onChangeText={setPassword}
+              placeholder="*************"
+            />
+
+            <GenderInput value={gender} onChange={setGender} />
+
+            <View style={styles.termsContainer}>
+              <Text style={styles.termsText}>By continuing, you agree to </Text>
+              <Text style={styles.linkText}>Terms of Use </Text>
+              <Text style={styles.termsText}>and </Text>
+              <Text style={styles.linkText}>Privacy Policy</Text>
             </View>
-          </Animated.View>
+          </View>
+        </Animated.View>
 
-          <Animated.View
-            entering={FadeIn.duration(400).delay(200).easing(Easing.ease)}
-            exiting={FadeOut.duration(300)}
-          >
-            <View style={styles.inputContainer}>
-              <ThemedText style={styles.label}>Full Name</ThemedText>
-              <CustomTextInput
-                value={name}
-                onChangeText={setName}
-                placeholder="Enter your full name"
-              />
+        <Animated.View
+          entering={FadeIn.duration(400).delay(600).easing(Easing.ease)}
+          exiting={FadeOut.duration(300)}
+        >
+          <SubmitButton title="SIGN UP" onPress={handleSignup} />
+        </Animated.View>
 
-              {/* <ThemedText style={styles.label}>Phone Number</ThemedText>
-              <CustomTextInput
-                value={phone}
-                onChangeText={setPhone}
-                keyboardType="phone-pad"
-                placeholder="Enter your phone number"
-              /> */}
-
-              <ThemedText style={styles.label}>Email Address</ThemedText>
-              <EmailInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="example@gmail.com"
-              />
-
-              <ThemedText style={styles.label}>Password</ThemedText>
-              <PasswordInput
-                value={password}
-                onChangeText={setPassword}
-                placeholder="*************"
-              />
-
-              <GenderInput value={gender} onChange={setGender} />
-
-              <View style={styles.termsContainer}>
-                <ThemedText style={styles.termsText}>
-                  By continuing, you agree to
-                </ThemedText>
-                <ThemedText type="link" style={styles.termsText}>
-                  Terms of Use
-                </ThemedText>
-                <ThemedText style={styles.termsText}>and</ThemedText>
-                <ThemedText type="link" style={styles.termsText}>
-                  Privacy Policy
-                </ThemedText>
-              </View>
-            </View>
-          </Animated.View>
-
-          <Animated.View
-            entering={FadeIn.duration(400).delay(600).easing(Easing.ease)}
-            exiting={FadeOut.duration(300)}
-          >
-            <SubmitButton title="SIGN UP" onPress={handleSignup} />
-          </Animated.View>
-
-          <Animated.View
-            entering={FadeIn.duration(400).delay(800).easing(Easing.ease)}
-            exiting={FadeOut.duration(300)}
-          >
-            <View style={styles.signupContainer}>
-              <ThemedText>Already have an account?</ThemedText>
-              <ThemedText type="link" onPress={() => navigate.push("/")}>
-                Login
-              </ThemedText>
-            </View>
-          </Animated.View>
-  
+        <Animated.View
+          entering={FadeIn.duration(400).delay(800).easing(Easing.ease)}
+          exiting={FadeOut.duration(300)}
+        >
+          <View style={styles.signupContainer}>
+            <Text style={styles.text}>Already have an account? </Text>
+            <Text style={styles.linkText} onPress={() => navigate.push("/")}>
+              Login
+            </Text>
+          </View>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -144,41 +135,62 @@ const Registration: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f8f9fa",
+    paddingHorizontal: 20,
   },
   scrollContainer: {
     flexGrow: 1,
-    paddingVertical: 15,
-    paddingHorizontal: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 15,
     justifyContent: "center",
   },
   header: {
     alignItems: "center",
+    marginBottom: 20,
   },
-  centerText: {
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#000",
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#000",
     textAlign: "center",
+    marginTop: 5,
   },
   inputContainer: {
-    marginTop: 20,
+    marginTop: 10,
   },
   label: {
     fontSize: 14,
+    color: "#000",
     marginBottom: 5,
   },
   termsContainer: {
     flexDirection: "row",
-    gap: 5,
-    alignItems: "center",
+    flexWrap: "wrap",
+    marginVertical: 15,
     justifyContent: "center",
-    marginTop: 15,
   },
   termsText: {
     fontSize: 12,
+    color: "#6c757d",
+  },
+  linkText: {
+    fontSize: 12,
+    color: "#1d3557",
+    fontWeight: "bold",
+    textDecorationLine: "underline",
   },
   signupContainer: {
     flexDirection: "row",
-    gap: 10,
-    alignItems: "center",
-    alignSelf: "center",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  text: {
+    fontSize: 14,
+    color: "#6c757d",
   },
 });
 

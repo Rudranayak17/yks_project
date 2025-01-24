@@ -12,16 +12,9 @@ interface PostProps {
 }
 
 const PostComponent: React.FC<PostProps> = ({ title, content, image }) => {
-  const colorScheme = useColorScheme();
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <ThemedView
-        style={[
-          styles.post,
-          { borderColor: colorScheme === "dark" ? "white" : "#ccc" },
-        ]}
-      >
+      <ThemedView style={[styles.post, { borderColor: "black" }]}>
         <View style={styles.postHeader}>
           <View style={styles.avatarPlaceholder} />
           <ThemedText style={styles.name}>{title}</ThemedText>
@@ -31,22 +24,22 @@ const PostComponent: React.FC<PostProps> = ({ title, content, image }) => {
         <ThemedText style={styles.likes}>Name1, Name2 and 34 others</ThemedText>
         <View style={styles.postFooter}>
           <ButtonWithIcon
-            colors={colorScheme === "dark" ? "white" : "black"}
+            color={"#000"}
             label="Like"
             iconName="heart-outline"
           />
           <ButtonWithIcon
-            colors={colorScheme === "dark" ? "white" : "black"}
+            color={"#000"}
             label="Comment"
             iconName="chatbubble-outline"
           />
           <ButtonWithIcon
-            colors={colorScheme === "dark" ? "white" : "black"}
+            color={"#000"}
             label="Send"
             iconName="send-outline"
           />
           <ButtonWithIcon
-            colors={colorScheme === "dark" ? "white" : "black"}
+            color={"#000"}
             label="Share"
             iconName="share-social-outline"
           />

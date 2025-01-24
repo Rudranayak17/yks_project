@@ -33,13 +33,13 @@ const StackLayout = () => {
   const segments = useSegments();
   const router = useRouter();
   const dispatch = useDispatch();
-  const pathname =usePathname()
+  const pathname = usePathname();
   const { data, isLoading } = useGetMyProfileQuery();
   useEffect(() => {
     console.log(pathname);
   }, [pathname]);
   // useEffect(() => {
-    
+
   //   if (data) {
   //     dispatch(setCredentials(data));
   //     console.log("User Data:", JSON.stringify(data, null, 2));
@@ -87,7 +87,6 @@ export default function RootLayout() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
@@ -101,12 +100,8 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <RootSiblingParent>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <StackLayout />
-          <StatusBar style="auto" />
-        </ThemeProvider>
+        <StackLayout />
+        <StatusBar style="dark" />
       </RootSiblingParent>
     </Provider>
   );

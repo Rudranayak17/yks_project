@@ -7,21 +7,21 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  Text,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Animated, { FadeIn, FadeOut, Easing } from "react-native-reanimated";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
+
 import CustomTextInput from "@/components/CustomTextInput";
 import SubmitButton from "@/components/Submit";
 type FormData = {
-    facebook: string;
-    twitter: string;
-    instagram: string;
-    snapchat: string;
-    linkedin: string;
-    vote: string;
-  };
+  facebook: string;
+  twitter: string;
+  instagram: string;
+  snapchat: string;
+  linkedin: string;
+  vote: string;
+};
 const requiredFields = [
   "email",
   "name",
@@ -34,13 +34,13 @@ const requiredFields = [
 ];
 
 const socialFields: { label: string; field: keyof FormData }[] = [
-    { label: "Facebook ID", field: "facebook" },
-    { label: "Twitter ID", field: "twitter" },
-    { label: "Instagram ID", field: "instagram" },
-    { label: "Snapchat ID", field: "snapchat" },
-    { label: "LinkedIn ID", field: "linkedin" },
-  ];
-  
+  { label: "Facebook ID", field: "facebook" },
+  { label: "Twitter ID", field: "twitter" },
+  { label: "Instagram ID", field: "instagram" },
+  { label: "Snapchat ID", field: "snapchat" },
+  { label: "LinkedIn ID", field: "linkedin" },
+];
+
 const AddMoreDetail: React.FC = () => {
   const local = useLocalSearchParams();
   const router = useRouter();
@@ -73,7 +73,9 @@ const AddMoreDetail: React.FC = () => {
   };
 
   const validateForm = () => {
-    const isEmptyField = socialFields.some(({ field }) => !formData[field as keyof FormData]);
+    const isEmptyField = socialFields.some(
+      ({ field }) => !formData[field as keyof FormData]
+    );
     if (isEmptyField || !formData.vote) {
       Alert.alert("Error", "Please fill out all required fields.");
       return false;
@@ -82,24 +84,28 @@ const AddMoreDetail: React.FC = () => {
   };
   const handleSignup = () => {
     if (validateForm()) {
-      console.log({ ...local, ...formData });
-      router.navigate({ pathname: "/(auth)/addDateBirth", params: { data:{...local, ...formData} } });
-    }
+    console.log({ ...local, ...formData });
+    router.navigate({
+      pathname: "/(auth)/addDateBirth",
+      params: { data: { ...local, ...formData } },
+    });
+  };
   };
 
   const renderSocialInputs = () => {
-    return socialFields.map(({ label, field }: { label: string; field: keyof FormData }) => (
-      <View key={field}>
-        <ThemedText style={styles.label}>{`Enter your ${label}`}</ThemedText>
-        <CustomTextInput
-          value={formData[field]}
-          onChangeText={(value) => handleInputChange(field, value)}
-          placeholder={`Enter your ${label}`}
-        />
-      </View>
-    ));
+    return socialFields.map(
+      ({ label, field }: { label: string; field: keyof FormData }) => (
+        <View key={field}>
+          <Text style={styles.label}>{`Enter your ${label}`}</Text>
+          <CustomTextInput
+            value={formData[field]}
+            onChangeText={(value) => handleInputChange(field, value)}
+            placeholder={`Enter your ${label}`}
+          />
+        </View>
+      )
+    );
   };
-  
 
   return (
     <KeyboardAvoidingView
@@ -113,12 +119,12 @@ const AddMoreDetail: React.FC = () => {
           exiting={FadeOut.duration(300)}
         >
           <View style={styles.header}>
-            <ThemedText type="title" style={styles.centerText}>
+            <Text style={[styles.centerText, styles.title]}>
               Add your Details
-            </ThemedText>
-            <ThemedText type="defaultSemiBold" style={styles.centerText}>
+            </Text>
+            <Text style={[styles.centerText, styles.subtitle]}>
               Fill your information below to create an account
-            </ThemedText>
+            </Text>
           </View>
         </Animated.View>
 
@@ -129,7 +135,7 @@ const AddMoreDetail: React.FC = () => {
           <View style={styles.inputContainer}>
             {renderSocialInputs()}
 
-            <ThemedText style={styles.label}>Are you a Member?</ThemedText>
+            <Text style={styles.label}>Are you a Member?</Text>
             <View style={styles.radioContainer}>
               {[
                 { label: "Yes", value: "Yes" },
@@ -146,7 +152,7 @@ const AddMoreDetail: React.FC = () => {
                       formData.vote === value && styles.radioSelected,
                     ]}
                   />
-                  <ThemedText style={styles.radioLabel}>{label}</ThemedText>
+                  <Text style={styles.radioLabel}>{label}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -174,6 +180,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     gap: 20,
     justifyContent: "center",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#6c757d",
+    marginBottom: 16,
   },
   header: {
     alignItems: "center",
@@ -208,7 +224,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   radioSelected: {
-    backgroundColor: "#555",
+    backgroundColor: "#002146",
   },
   radioLabel: {
     fontSize: 16,

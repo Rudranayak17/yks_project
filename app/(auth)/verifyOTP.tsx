@@ -7,9 +7,11 @@ import {
   TextInput,
   Platform,
   Dimensions,
+  Text,
+  
 } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
+
+
 import SubmitButton from "../../components/Submit";
 import { useRouter } from "expo-router";
 import Animated, { FadeIn, FadeOut, Easing } from "react-native-reanimated";
@@ -23,7 +25,7 @@ const VerifyOTP: React.FC = () => {
   const inputs = useRef<TextInput[]>([]); // Ref to manage input focus
 
   const navigate = useRouter();
-  const textColor = useThemeColor({}, "text"); // Dynamic text color based on theme
+
 
   const handleLogin = async () => {
     const enteredOTP = otp.join("");
@@ -51,7 +53,7 @@ const VerifyOTP: React.FC = () => {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -65,15 +67,15 @@ const VerifyOTP: React.FC = () => {
             exiting={FadeOut.duration(300)}
           >
             <View>
-              <ThemedText type="title" style={styles.centerText}>
+              <Text  style={[styles.centerText, styles.title]}>
                 Verification Code
-              </ThemedText>
-              <ThemedText type="defaultSemiBold" style={styles.centerText}>
+              </Text>
+              <Text  style={[styles.centerText, styles.subtitle]}>
                 Kindly check your email
-              </ThemedText>
-              <ThemedText type="defaultSemiBold" style={styles.centerText}>
+              </Text>
+              <Text style={[styles.centerText, styles.subtitle]}>
                 A 6-digit verification code has been sent to your email.
-              </ThemedText>
+              </Text>
             </View>
           </Animated.View>
 
@@ -88,7 +90,7 @@ const VerifyOTP: React.FC = () => {
                   value={digit}
                   onChangeText={(text) => handleOtpChange(text, index)}
                   onKeyPress={(event) => handleKeyPress(event, index)}
-                  style={[styles.otpInput, { color: textColor }]} // Apply theme color to text
+                  style={[styles.otpInput,]} // Apply theme color to text
                   keyboardType="numeric"
                   maxLength={1}
                   textAlign="center"
@@ -110,7 +112,7 @@ const VerifyOTP: React.FC = () => {
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </ThemedView>
+    </View>
   );
 };
 
@@ -118,6 +120,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "gray",
   },
   scrollContainer: {
     flexGrow: 1,
@@ -139,7 +150,8 @@ const styles = StyleSheet.create({
     width: width * 0.12, // Set width relative to the screen size
     height: 50,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "gray",
+    color:"#000",
     borderRadius: 5,
     fontSize: 18,
   },

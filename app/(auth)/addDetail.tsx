@@ -12,8 +12,6 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Animated, { FadeIn, FadeOut, Easing } from "react-native-reanimated";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
 
 import CustomTextInput from "@/components/CustomTextInput";
 import SubmitButton from "@/components/Submit";
@@ -76,7 +74,10 @@ const AddDetail: React.FC = () => {
   const handleSignup = () => {
     if (validateForm()) {
       console.log({ ...local, ...formData });
-      router.navigate({pathname:"/addmoreDetail",params:{...local, ...formData}});
+      router.navigate({
+        pathname: "/addmoreDetail",
+        params: { ...local, ...formData },
+      });
       // Add actual signup logic here (e.g., API call)
     }
   };
@@ -87,19 +88,22 @@ const AddDetail: React.FC = () => {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header Section */}
         <Animated.View
           entering={FadeIn.duration(400).easing(Easing.ease)}
           exiting={FadeOut.duration(300)}
         >
           <View style={styles.header}>
-            <ThemedText type="title" style={styles.centerText}>
+            <Text style={[styles.centerText, styles.title]}>
               Add your Details
-            </ThemedText>
-            <ThemedText type="defaultSemiBold" style={styles.centerText}>
+            </Text>
+            <Text style={[styles.centerText, styles.subtitle]}>
               Fill your information below to create an account
-            </ThemedText>
+            </Text>
           </View>
         </Animated.View>
 
@@ -109,14 +113,14 @@ const AddDetail: React.FC = () => {
           exiting={FadeOut.duration(300)}
         >
           <View style={styles.inputContainer}>
-            <ThemedText style={styles.label}>Designation</ThemedText>
+            <Text style={styles.label}>Designation</Text>
             <CustomTextInput
               value={formData.designation}
               onChangeText={(value) => handleInputChange("designation", value)}
               placeholder="Enter your designation"
             />
 
-            <ThemedText style={styles.label}>Phone Number</ThemedText>
+            <Text style={styles.label}>Phone Number</Text>
             <CustomTextInput
               value={formData.phone}
               onChangeText={(value) => handleInputChange("phone", value)}
@@ -124,7 +128,7 @@ const AddDetail: React.FC = () => {
               placeholder="Enter your phone number"
             />
 
-            <ThemedText style={styles.label}>WhatsApp Number</ThemedText>
+            <Text style={styles.label}>WhatsApp Number</Text>
             <CustomTextInput
               value={formData.whatsappNo}
               onChangeText={(value) => handleInputChange("whatsappNo", value)}
@@ -132,7 +136,7 @@ const AddDetail: React.FC = () => {
               placeholder="Enter your WhatsApp number"
             />
 
-            <ThemedText style={styles.label}>Select Vote</ThemedText>
+            <Text style={styles.label}>Select Vote</Text>
             <View style={styles.radioContainer}>
               {["Vote 1", "Vote 2", "Vote 3"].map((voteOption) => (
                 <TouchableOpacity
@@ -146,21 +150,19 @@ const AddDetail: React.FC = () => {
                       formData.vote === voteOption && styles.radioSelected,
                     ]}
                   />
-                  <ThemedText style={styles.radioLabel}>
-                    {voteOption}
-                  </ThemedText>
+                  <Text style={styles.radioLabel}>{voteOption}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
-            <ThemedText style={styles.label}>Anniversary Date</ThemedText>
+            <Text style={styles.label}>Anniversary Date</Text>
             <TouchableOpacity
               onPress={() => setShowDatePicker(true)}
               style={styles.datePicker}
             >
-              <ThemedText>
+              <Text>
                 {formData.anniversaryDate || "Select Anniversary Date"}
-              </ThemedText>
+              </Text>
             </TouchableOpacity>
             {showDatePicker && (
               <DateTimePicker
@@ -183,10 +185,11 @@ const AddDetail: React.FC = () => {
       </ScrollView>
     </KeyboardAvoidingView>
   );
-}
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
   scrollContainer: {
     flexGrow: 1,
@@ -208,12 +211,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 5,
   },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#6c757d",
+    marginBottom: 16,
+  },
   radioContainer: {
-    paddingHorizontal:7,
+    paddingHorizontal: 7,
     flexDirection: "column",
     alignItems: "flex-start",
     paddingVertical: 10,
-    backgroundColor: "grey",
+    // backgroundColor: "grey",
     borderRadius: 10,
     marginTop: 10,
     gap: 20,
@@ -234,7 +247,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   radioSelected: {
-    backgroundColor: "#ffff",
+    backgroundColor: "#002146",
   },
   radioLabel: {
     fontSize: 16,

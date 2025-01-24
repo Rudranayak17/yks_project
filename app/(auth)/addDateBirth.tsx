@@ -1,17 +1,28 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert, Platform } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Platform,
+  Text,
+} from "react-native";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import { FontAwesome } from "@expo/vector-icons";
 import SubmitButton from "@/components/Submit";
-import { router, useNavigation } from "expo-router";
+import { useNavigation, router } from "expo-router";
 
-const AddDateBirth = () => {
+const AddDateBirth: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
-const navigation = useNavigation();
-  const handleDateChange = (event: any, date: Date | undefined) => {
+  const navigation = useNavigation();
+
+  const handleDateChange = (
+    event: DateTimePickerEvent,
+    date?: Date
+  ): void => {
     setShowDatePicker(false);
     if (date) {
       const formattedDate = date.toLocaleDateString("en-GB"); // Format: DD/MM/YYYY
@@ -19,27 +30,30 @@ const navigation = useNavigation();
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (): void => {
     if (!selectedDate) {
       Alert.alert("Error", "Please select your date of birth.");
       return;
     }
-    // Add your submission logic here (e.g., API call or navigation)
     Alert.alert("Success", `Your Date of Birth: ${selectedDate}`);
-    router.navigate("/(auth)/addProfile");
+    router.push("/(auth)/addProfile");
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <FontAwesome name="birthday-cake" size={55} color="black" />
-      <ThemedText type="title">Add your DOB</ThemedText>
-      <ThemedText>This won't be part of your public profile</ThemedText>
+      <Text style={styles.title}>Add your DOB</Text>
+      <Text style={styles.subtitle}>
+        This won't be part of your public profile
+      </Text>
 
       <TouchableOpacity
         onPress={() => setShowDatePicker(true)}
         style={styles.datePicker}
       >
-        <ThemedText>{selectedDate || "DD/MM/YYYY"}</ThemedText>
+        <Text style={styles.dateText}>
+          {selectedDate || "DD/MM/YYYY"}
+        </Text>
       </TouchableOpacity>
 
       {showDatePicker && (
@@ -53,26 +67,44 @@ const navigation = useNavigation();
       )}
 
       <SubmitButton title="Next" onPress={handleSubmit} />
-    </ThemedView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
-    gap: 20,
     paddingHorizontal: 20,
+    gap: 20,
   },
   datePicker: {
-    padding: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 10,
     width: "70%",
     alignItems: "center",
     marginVertical: 10,
+  },
+  dateText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#6c757d",
+    marginBottom: 16,
+    textAlign: "center",
   },
 });
 

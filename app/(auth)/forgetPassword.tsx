@@ -3,60 +3,65 @@ import {
   View,
   StyleSheet,
   ScrollView,
+  Text,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
+
 import EmailInput from "../../components/EmailInput";
 import SubmitButton from "../../components/Submit";
 import { useRouter } from "expo-router";
 import Animated, { FadeIn, FadeOut, Easing } from "react-native-reanimated";
-import { useLoginMutation } from "@/store/api/auth";
-import { showToast } from "@/utils/ShowToast";
-import { useDispatch } from "react-redux";
 
-const ForgetPassword: React.FC = () => {
+interface ForgetPasswordProps {
+  title?: string;
+  subtitle?: string;
+}
+
+const ForgetPassword: React.FC<ForgetPasswordProps> = ({
+  title = "Forget Password",
+  subtitle = "Enter your email to create a new password",
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
 
   const navigate = useRouter();
-  const dispatch = useDispatch();
 
   const handleLogin = async () => {
     navigate.navigate({ pathname: "/verifyOTP", params: { email } });
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           keyboardShouldPersistTaps="handled"
         >
+          {/* Animated Title and Subtitle */}
           <Animated.View
             entering={FadeIn.duration(400).easing(Easing.ease)}
             exiting={FadeOut.duration(300)}
           >
             <View>
-              <ThemedText type="title" style={styles.centerText}>
-                Forget Password
-              </ThemedText>
-              <ThemedText type="defaultSemiBold" style={styles.centerText}>
-                Enter your email to create a new password
-              </ThemedText>
+              <Text style={[styles.centerText, styles.title]}>{title}</Text>
+              <Text style={[styles.centerText, styles.subtitle]}>
+                {subtitle}
+              </Text>
             </View>
           </Animated.View>
 
+          {/* Animated Email Input */}
           <Animated.View
             entering={FadeIn.duration(400).delay(600).easing(Easing.ease)}
             exiting={FadeOut.duration(300)}
           >
             <View style={styles.inputContainer}>
-              <ThemedText style={styles.label}>Enter your email</ThemedText>
+              <Text style={styles.label}>Enter your email</Text>
               <EmailInput
                 value={email}
                 onChangeText={setEmail}
@@ -65,6 +70,7 @@ const ForgetPassword: React.FC = () => {
             </View>
           </Animated.View>
 
+          {/* Animated Submit Button */}
           <Animated.View
             entering={FadeIn.duration(400).delay(1000).easing(Easing.ease)}
             exiting={FadeOut.duration(300)}
@@ -77,7 +83,7 @@ const ForgetPassword: React.FC = () => {
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </ThemedView>
+    </View>
   );
 };
 
@@ -95,6 +101,15 @@ const styles = StyleSheet.create({
   },
   centerText: {
     textAlign: "center",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "gray",
   },
   label: {
     fontSize: 14,
