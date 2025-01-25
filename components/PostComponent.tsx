@@ -1,8 +1,6 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
-import { useColorScheme } from "@/hooks/useColorScheme.web";
+
 import ButtonWithIcon from "./ButtonWithIcon"; // Import reusable button
 
 interface PostProps {
@@ -13,15 +11,15 @@ interface PostProps {
 
 const PostComponent: React.FC<PostProps> = ({ title, content, image }) => {
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <ThemedView style={[styles.post, { borderColor: "black" }]}>
+   
+      <View style={[styles.post, { borderColor: "black" }]}>
         <View style={styles.postHeader}>
           <View style={styles.avatarPlaceholder} />
-          <ThemedText style={styles.name}>{title}</ThemedText>
+          <Text style={styles.name}>{title}</Text>
         </View>
-        <ThemedText style={styles.postContent}>{content}</ThemedText>
+        <Text style={styles.postContent}>{content}</Text>
         <Image source={{ uri: image }} style={styles.image} />
-        <ThemedText style={styles.likes}>Name1, Name2 and 34 others</ThemedText>
+        <Text style={styles.likes}>Name1, Name2 and 34 others</Text>
         <View style={styles.postFooter}>
           <ButtonWithIcon
             color={"#000"}
@@ -33,19 +31,15 @@ const PostComponent: React.FC<PostProps> = ({ title, content, image }) => {
             label="Comment"
             iconName="chatbubble-outline"
           />
-          <ButtonWithIcon
-            color={"#000"}
-            label="Send"
-            iconName="send-outline"
-          />
+          <ButtonWithIcon color={"#000"} label="Send" iconName="send-outline" />
           <ButtonWithIcon
             color={"#000"}
             label="Share"
             iconName="share-social-outline"
           />
         </View>
-      </ThemedView>
-    </ScrollView>
+      </View>
+
   );
 };
 

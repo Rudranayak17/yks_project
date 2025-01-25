@@ -1,41 +1,65 @@
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import React from "react";
-import { Platform } from "react-native";
+import { Platform, TouchableOpacity } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const navigation = useRouter();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors["light"].tint,
+        headerTitleAlign: "left",
+        tabBarActiveTintColor: "#ffff",
         headerShown: true,
-        tabBarHideOnKeyboard:true,
+        tabBarHideOnKeyboard: true,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
+        headerStyle: {
+          backgroundColor: "#002146",
+        },
+        headerTitleStyle: {
+          color: "#fff",
+        },
         tabBarStyle: Platform.select({
-
           ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: "absolute",
+            backgroundColor: "#002146",
+            borderTopColor: "transparent",
+            height: 60,
+            paddingBottom: 10,
           },
-          default: {},
+          android: {
+            backgroundColor: "#002146",
+            borderTopColor: "transparent",
+            height: 60,
+          },
+          default: {
+            backgroundColor: "#002146",
+            height: 60,
+          },
         }),
+        headerRight: () => (
+          <TouchableOpacity
+            style={{ marginRight: 15 }}
+            onPress={() => navigation.navigate("/chat")}
+          >
+            <Entypo name="chat" size={24} color="white" />
+          </TouchableOpacity>
+        ),
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "Home",
-          headerTitleAlign:"left",
-          headerTitle:"App Name",
+          headerTitle: "App Name",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="house.fill" color={color} />
           ),
@@ -53,9 +77,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "profile",
+          title: "My Profile",
           tabBarIcon: ({ color }) => (
-            <AntDesign name="user" size={28} color={color}/>
+            <AntDesign name="user" size={28} color={color} />
           ),
         }}
       />
