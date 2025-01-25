@@ -101,7 +101,7 @@ export default function RootLayout() {
     <Provider store={store}>
       <RootSiblingParent>
         <StackLayout />
-        <StatusBar style="dark" />
+        <StatusBar style="light" />
       </RootSiblingParent>
     </Provider>
   );

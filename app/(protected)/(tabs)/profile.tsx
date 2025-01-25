@@ -7,17 +7,20 @@ import {
   ScrollView,
   Image,
   Alert,
+  Modal,
+  TouchableOpacity,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-
+import { useRouter } from "expo-router";
 import PostComponent from "@/components/PostComponent";
 import { data } from "@/constants/data";
-import { useRouter } from "expo-router";
+import { showToast } from "@/utils/ShowToast";
 
 const Profile = () => {
   const [profileImage, setProfileImage] = useState(null);
-  const navigation = useRouter(); // Initialize useNavigation hook
+  const [isModalVisible, setIsModalVisible] = useState(false); // Modal state
+  const navigation = useRouter();
 
   const handlePickImage = async () => {
     const permissionResult =
@@ -40,6 +43,16 @@ const Profile = () => {
     if (!result.canceled) {
       setProfileImage(result.assets[0].uri);
     }
+  };
+
+  const handleLogout = () => {
+    // Perform the logout action (e.g., clearing tokens or resetting state)
+    navigation.replace("/(auth)")
+    showToast({
+      message: " You have been logged out.",
+      backgroundColor: "green",
+    });
+    setIsModalVisible(false); // Close the modal after logout
   };
 
   return (
@@ -72,17 +85,21 @@ const Profile = () => {
           </View>
 
           <View style={styles.buttonsContainer}>
-            {["Edit Profile", "Create Post", "..."].map((label, index) => (
+            {["Edit Profile", "Create Post", "Logout"].map((label, index) => (
               <Pressable
                 key={index}
-                style={styles.button}
+                style={[
+                  styles.button,
+                  { backgroundColor: label === "Logout" ? "red" : "#002146" },
+                ]}
                 onPress={() => {
                   if (label === "Edit Profile") {
-                    navigation.navigate("/profile"); // Navigate to EditProfile screen
+                    navigation.navigate("/profile");
                   } else if (label === "Create Post") {
-                    navigation.navigate("/create"); // Navigate to CreatePost screen
+                    navigation.navigate("/create");
+                  } else if (label === "Logout") {
+                    setIsModalVisible(true); // Show the modal on logout
                   }
-                  // Add actions for other buttons if needed
                 }}
               >
                 <Text style={styles.buttonText}>{label}</Text>
@@ -103,6 +120,36 @@ const Profile = () => {
           </View>
         ))}
       </View>
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        visible={isModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              Are you sure you want to logout?
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={() => setIsModalVisible(false)}
+              >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.confirmButton]}
+                onPress={handleLogout}
+              >
+                <Text style={styles.modalButtonText}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -111,7 +158,7 @@ export default Profile;
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    flexGrow: 1, // Ensures content grows dynamically
+    flexGrow: 1,
     padding: 10,
     backgroundColor: "#fff",
   },
@@ -141,7 +188,7 @@ const styles = StyleSheet.create({
     borderRadius: 65,
     justifyContent: "center",
     alignItems: "center",
-    overflow: "hidden", // Ensures the image fits the circle
+    overflow: "hidden",
   },
   profileImage: {
     width: "100%",
@@ -181,7 +228,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#002146",
-    paddingHorizontal: 25,
+    paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 5,
     alignItems: "center",
@@ -200,5 +247,45 @@ const styles = StyleSheet.create({
   },
   postContainer: {
     paddingVertical: 10,
+  },
+  // Modal styles
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    width: 300,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    width: "100%",
+  },
+  modalButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    width: "40%",
+  },
+  cancelButton: {
+    backgroundColor: "#ccc",
+  },
+  confirmButton: {
+    backgroundColor: "red",
+  },
+  modalButtonText: {
+    color: "#fff",
+    textAlign: "center",
   },
 });

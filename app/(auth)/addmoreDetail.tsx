@@ -60,10 +60,12 @@ const AddMoreDetail: React.FC = () => {
       Alert.alert(
         "Missing Information",
         "Some required details are missing. Please sign up first.",
-        [{
-          text: "OK",
-          onPress: () => router.replace("/(auth)/registration"),
-        }]
+        [
+          {
+            text: "OK",
+            onPress: () => router.replace("/(auth)/registration"),
+          },
+        ]
       );
     }
   }, [local, router]);
@@ -84,12 +86,12 @@ const AddMoreDetail: React.FC = () => {
   };
   const handleSignup = () => {
     if (validateForm()) {
-    console.log({ ...local, ...formData });
-    router.navigate({
-      pathname: "/(auth)/addDateBirth",
-      params: { data: { ...local, ...formData } },
-    });
-  };
+      console.log({ ...local, ...formData });
+      router.navigate({
+        pathname: "/(auth)/addDateBirth",
+        params: { ...local, ...formData },
+      });
+    }
   };
 
   const renderSocialInputs = () => {

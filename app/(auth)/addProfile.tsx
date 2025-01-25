@@ -4,13 +4,82 @@ import { View, StyleSheet, Image, TouchableOpacity, Text } from "react-native";
 import { EvilIcons } from "@expo/vector-icons";
 import SubmitButton from "@/components/Submit";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useRegistrationMutation } from "@/store/api/auth";
 
 const AddProfile = () => {
   const navigation = useRouter();
+  const [createUser] = useRegistrationMutation();
+  const local = useLocalSearchParams();
+  const {
+    birthdate,
+    anniversaryDate,
+    designation,
+    email,
+    facebook,
+    name,
+    gender,
+    instagram,
+    linkedin,
+    member,
+    password,
+    phone,
+    snapChat,
+    twitter,
+    whatsappNo,
+    vote,
+    address,
+    snapchat,
+  } = local;
+  // console.log(local);
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const submitHandler = () => {
-    navigation.replace("/");
+  const submitHandler = async () => {
+    console.log({        address: address,
+      birthdate,
+      anniversary: anniversaryDate,
+      designation,
+      email,
+      facebook,
+      fullName: name,
+      gender,
+      instagram,
+      linkedin,
+      member: true,
+      password,
+      phoneNo: phone,
+      profile_pic: "This is the profileImage",
+      snapChat: snapchat,
+
+      twitter,
+      voter: true, 
+      whatsappNo,})
+    try {
+      const resp = await createUser({
+        address: address,
+        birthdate,
+        anniversary: anniversaryDate,
+        designation,
+        email,
+        facebook,
+        fullName: name,
+        gender:"MALE",
+        instagram,
+        linkedin,
+        member: true,
+        password,
+        phoneNo: phone,
+        profile_pic: "This is the profileImage",
+        snapChat: snapchat,
+
+        twitter,
+        voter: true, 
+        whatsappNo,
+      });
+      console.log(resp);
+    } catch (error) {
+      console.log(error);
+    }
+    // navigation.replace("/");
   };
   const handleImagePick = async () => {
     const permissionResult =

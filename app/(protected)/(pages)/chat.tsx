@@ -26,7 +26,9 @@ const Chat: React.FC = () => {
   const [text, setText] = useState("");
   const [isScrolledUp, setIsScrolledUp] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null); // State for selected image
-
+  const cancelDisapproval = () => {
+    setSelectedImage(null);
+  };
   const myId = "123"; // Dummy ID for the current user
   const myProfileImage =
     "https://easy-peasy.ai/cdn-cgi/image/quality=80,format=auto,width=700/https://fdczvxmwwjwpwbeeqcth.supabase.co/storage/v1/object/public/images/50dab922-5d48-4c6b-8725-7fd0755d9334/3a3f2d35-8167-4708-9ef0-bdaa980989f9.png"; // Profile image for the current user
@@ -137,7 +139,7 @@ const Chat: React.FC = () => {
       </View>
 
       {/* Modal for selected profile image */}
-      <Modal visible={!!selectedImage} transparent animationType="fade">
+      <Modal visible={!!selectedImage} transparent animationType="fade" onRequestClose={cancelDisapproval}>
         <TouchableWithoutFeedback onPress={() => setSelectedImage(null)}>
           <View style={styles.modalBackground}>
             {selectedImage && (

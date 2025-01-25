@@ -7,6 +7,13 @@ const _layout = () => {
     <Stack
       screenOptions={{
         animation: "slide_from_right",
+        headerTitleStyle: {
+          color: "#ffff",
+        },
+        headerTintColor: "#ffff", // Sets the back arrow color to white
+        headerStyle: {
+          backgroundColor: "#002146",
+        },
       }}
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -14,7 +21,7 @@ const _layout = () => {
         name="chat"
         options={{ headerShown: true, headerTitle: "Community Alpha" }}
       />
-      <Stack.Screen name="createPost" options={{ headerShown: false }} />
+      <Stack.Screen name="createPost" options={{ headerShown: true,headerTitle: "Create Post Detail" }} />
     </Stack>
   );
 };

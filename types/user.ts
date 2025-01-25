@@ -11,14 +11,14 @@ export interface User {
   address?: string;
 }
 export interface CONTENT {
-token?: string;
-username: string;
-userId:number|string;
-fullName:string;
-UserRole:string;
-userProfile:string;
+  token?: string;
+  username: string;
+  userId: number | string;
+  fullName: string;
+  userRole: "ROLE_ADMIN"|"ROLE_USER";
+  userProfilePic: string;
 }
-export interface contact{
+export interface contact {
   name: string;
   email: string;
   message: string;
@@ -37,3 +37,25 @@ export const columns: UserTableColumn[] = [
   { id: "role", label: "Role", sortable: true },
   { id: "createdAt", label: "Created At", sortable: true }, // Changed from 'lastActive' to 'createdAt'
 ];
+
+export type UserProfile = {
+  societyId?:string;
+  fullName?: string;
+  email?: string;
+  password?: string;
+  phoneNo?: string;
+  profile_pic?: string;
+  designation?: string;
+  address?: string;
+  birthdate?: string;
+  anniversary?: string;
+  gender?: "MALE" | "FEMALE" | "OTHER"; // Enum for gender, based on provided data
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  snapChat?: string;
+  whatsappNo?: string;
+  voter?: boolean;
+  member?: boolean;
+};

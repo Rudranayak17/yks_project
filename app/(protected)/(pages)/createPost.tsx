@@ -22,7 +22,7 @@ type CreatePostParams = {
 
 const CreatePost: React.FC = () => {
   const params = useLocalSearchParams() as CreatePostParams;
-  const router=useRouter()
+  const router = useRouter();
   const { selectedImage } = params; // Destructure selectedImage from params
   const [postContent, setPostContent] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -38,9 +38,10 @@ const CreatePost: React.FC = () => {
     // Simulate API call or post creation logic
     setTimeout(() => {
       setLoading(false);
-      Alert.alert("Post Created", "Your post has been successfully created!");
+      Alert.alert("Post Created", "Your post is awaiting admin approval.");
+
       setPostContent(""); // Clear input after post creation
-      router.replace("/profile")
+      router.replace("/profile");
     }, 2000);
   };
 
@@ -54,10 +55,7 @@ const CreatePost: React.FC = () => {
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.container}>
             {selectedImage && (
-              <Image
-                source={{ uri: selectedImage }}
-                style={styles.image}
-              />
+              <Image source={{ uri: selectedImage }} style={styles.image} />
             )}
             <TextInput
               style={styles.input}

@@ -7,15 +7,20 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo, FontAwesome6 } from "@expo/vector-icons";
+import { selectCurrentLoading, selectCurrentUser } from "@/store/reducer/auth";
+import { useSelector } from "react-redux";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const navigation = useRouter();
-
+  const user = useSelector(selectCurrentUser);
+  const isLoading = useSelector(selectCurrentLoading);
+  console.log(user);
   return (
     <Tabs
       screenOptions={{
+        animation: "fade",
         headerTitleAlign: "left",
         tabBarActiveTintColor: "#ffff",
         headerShown: true,
@@ -67,10 +72,22 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="create"
+        redirect={!isLoading && user?.userRole !== "ROLE_USER"}
         options={{
           title: "Create",
           tabBarIcon: ({ color }) => (
             <AntDesign name="plus" size={28} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="approve"
+        redirect={!isLoading && user?.userRole !== "ROLE_ADMIN"}
+        options={{
+          title: "approve",
+          headerTitle: "YKS Foundation",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome6 name="book" size={24} color={color} />
           ),
         }}
       />

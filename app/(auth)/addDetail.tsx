@@ -26,6 +26,7 @@ const AddDetail: React.FC = () => {
     whatsappNo: "",
     vote: "",
     anniversaryDate: "", // Add anniversaryDate field
+    address: "", // Add address field
   });
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -61,9 +62,9 @@ const AddDetail: React.FC = () => {
   };
 
   const validateForm = () => {
-    const { designation, phone, whatsappNo, vote, anniversaryDate } = formData;
+    const { designation, phone, whatsappNo, vote, anniversaryDate, address } = formData;
 
-    if (!designation || !phone || !whatsappNo || !vote || !anniversaryDate) {
+    if (!designation || !phone || !whatsappNo || !vote || !anniversaryDate || !address) {
       Alert.alert("Error", "Please fill out all required fields.");
       return false;
     }
@@ -172,6 +173,14 @@ const AddDetail: React.FC = () => {
                 onChange={handleDateChange}
               />
             )}
+
+            {/* Address Field */}
+            <Text style={styles.label}>Address</Text>
+            <CustomTextInput
+              value={formData.address}
+              onChangeText={(value) => handleInputChange("address", value)}
+              placeholder="Enter your address"
+            />
           </View>
         </Animated.View>
 
@@ -186,6 +195,7 @@ const AddDetail: React.FC = () => {
     </KeyboardAvoidingView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -226,7 +236,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-start",
     paddingVertical: 10,
-    // backgroundColor: "grey",
     borderRadius: 10,
     marginTop: 10,
     gap: 20,

@@ -41,13 +41,13 @@ const Registration: React.FC = () => {
   };
 
   const handleSignup = () => {
-    // if (validateForm()) {
+    if (validateForm()) {
       console.log("Signup Attempt:", { email, password, name, gender });
       navigate.navigate({
         pathname: "/(auth)/addDetail",
-        params: { email, password, name },
+        params: { email, password, name ,gender},
       });
-    // }
+    }
   };
 
   return (

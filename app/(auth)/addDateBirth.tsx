@@ -12,17 +12,15 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import { FontAwesome } from "@expo/vector-icons";
 import SubmitButton from "@/components/Submit";
-import { useNavigation, router } from "expo-router";
+import { useNavigation, router, useLocalSearchParams } from "expo-router";
 
 const AddDateBirth: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const navigation = useNavigation();
-
-  const handleDateChange = (
-    event: DateTimePickerEvent,
-    date?: Date
-  ): void => {
+  const local = useLocalSearchParams();
+  // console.log(local);
+  const handleDateChange = (event: DateTimePickerEvent, date?: Date): void => {
     setShowDatePicker(false);
     if (date) {
       const formattedDate = date.toLocaleDateString("en-GB"); // Format: DD/MM/YYYY
@@ -36,7 +34,10 @@ const AddDateBirth: React.FC = () => {
       return;
     }
     Alert.alert("Success", `Your Date of Birth: ${selectedDate}`);
-    router.push("/(auth)/addProfile");
+    router.push({
+      pathname: "/(auth)/addProfile",
+      params: { ...local, ...{ birthdate: selectedDate } },
+    });
   };
 
   return (
@@ -51,9 +52,7 @@ const AddDateBirth: React.FC = () => {
         onPress={() => setShowDatePicker(true)}
         style={styles.datePicker}
       >
-        <Text style={styles.dateText}>
-          {selectedDate || "DD/MM/YYYY"}
-        </Text>
+        <Text style={styles.dateText}>{selectedDate || "DD/MM/YYYY"}</Text>
       </TouchableOpacity>
 
       {showDatePicker && (
