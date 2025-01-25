@@ -11,6 +11,8 @@ const layout = () => {
     >
       <Stack.Screen name="(tabs)" options={{ headerShown: false, title: '' }} />
       <Stack.Screen name="(pages)" options={{ headerShown: false, title: '' }} />
+      <Stack.Screen name="(superAdmin)" />
+      <Stack.Screen name="(admin)" />
     </Stack>
   );
 };

@@ -15,7 +15,7 @@ export interface CONTENT {
   username: string;
   userId: number | string;
   fullName: string;
-  userRole: "ROLE_ADMIN"|"ROLE_USER";
+  userRole: "ROLE_ADMIN"|"ROLE_USER"|"ROLE_SUPER_ADMIN";
   userProfilePic: string;
 }
 export interface contact {

@@ -50,18 +50,31 @@ export default function TabLayout() {
             height: 60,
           },
         }),
-        headerRight: () => (
-          <TouchableOpacity
-            style={{ marginRight: 15 }}
-            onPress={() => navigation.navigate("/chat")}
-          >
-            <Entypo name="chat" size={24} color="white" />
-          </TouchableOpacity>
-        ),
+        headerRight: () => {if (user?.userRole === "ROLE_SUPER_ADMIN") return null;
+          return (
+            <TouchableOpacity
+              style={{ marginRight: 15 }}
+              onPress={() => navigation.navigate("/chat")}
+            >
+              <Entypo name="chat" size={24} color="white" />
+            </TouchableOpacity>
+          );},
       }}
     >
       <Tabs.Screen
         name="index"
+        redirect={!isLoading && user?.userRole === "ROLE_SUPER_ADMIN"}
+        options={{
+          title: "Home",
+          headerTitle: "App Name",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="house.fill" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="SuperAdminHome"
+        redirect={!isLoading && user?.userRole !== "ROLE_SUPER_ADMIN"}
         options={{
           title: "Home",
           headerTitle: "App Name",
@@ -93,6 +106,7 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="profile"
+        redirect={!isLoading && user?.userRole === "ROLE_SUPER_ADMIN"}
         options={{
           title: "My Profile",
           tabBarIcon: ({ color }) => (
