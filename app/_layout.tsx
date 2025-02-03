@@ -5,12 +5,13 @@ import {
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack, usePathname, useRouter, useSegments } from "expo-router";
+import * as ScreenCapture from 'expo-screen-capture';
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useId, useState } from "react";
 import "react-native-reanimated";
 import { RootSiblingParent } from "react-native-root-siblings";
-
+import { usePreventScreenCapture } from 'expo-screen-capture';
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { ActivityIndicator } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
@@ -20,58 +21,44 @@ import {
   authError,
   selectCurrentIsAuth,
   selectCurrentLoading,
+  selectCurrentUser,
   setCredentials,
 } from "@/store/reducer/auth";
 import { useGetMyProfileQuery } from "@/store/api/auth";
 import { store } from "@/store/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 const StackLayout = () => {
+  const userdetail=useSelector(selectCurrentUser)
   const isAuth = useSelector(selectCurrentIsAuth);
   const isAuthLoading = useSelector(selectCurrentLoading);
   const segments = useSegments();
   const router = useRouter();
   const dispatch = useDispatch();
   const pathname = usePathname();
-  const { data, isLoading } = useGetMyProfileQuery();
+  const [id,setId]=useState("")
+  // const { data, isLoading } = useGetMyProfileQuery({id});
   useEffect(() => {
     console.log(pathname);
   }, [pathname]);
-  // useEffect(() => {
 
-  //   if (data) {
-  //     dispatch(setCredentials(data));
-  //     console.log("User Data:", JSON.stringify(data, null, 2));
-  //   } else if (!isLoading) {
-  //     dispatch(authError());
-  //   }
-  // }, [data, isLoading, dispatch]);
 
-  // useEffect(() => {
-  //   const inProtectedGroup = segments[0] === "(protected)";
 
-  //   // If not authenticated and in protected group, redirect to login
-  //   if (!isAuth && inProtectedGroup) {
-  //     router.replace("/"); // Redirect to authentication flow
-  //   }
+  // console.log(userdetail)
+  useEffect(() => {
+    if (userdetail && userdetail.userRole === "ROLE_SUPER_ADMIN") {
+      ScreenCapture.allowScreenCaptureAsync();
+    }else{
+      ScreenCapture.preventScreenCaptureAsync();
+    }
+  }, [userdetail]);
+  
+  
 
-  //   // If authenticated, always send to the home page
-  //   if (isAuth && !inProtectedGroup) {
-  //     router.replace("/(protected)/(tabs)/explore"); // Redirect to home
-  //   }
-  // }, [isAuth, segments, router]);
 
-  // // While loading auth state, show a loading indicator
-  // if (isAuthLoading) {
-  //   return (
-  //     <ThemedView
-  //       style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-  //     >
-  //       <ActivityIndicator size="large" />
-  //     </ThemedView>
-  //   );
-  // }
+
 
   return (
     <Stack>

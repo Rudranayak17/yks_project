@@ -6,6 +6,7 @@ import {
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RootState } from "./store";
 
 const SERVER_URL = "https://yks.up.railway.app";
 console.log(SERVER_URL); // Debug: Ensure the correct server URL is printed
@@ -25,10 +26,11 @@ const getToken = async (): Promise<string | null> => {
 const baseQuery = fetchBaseQuery({
   baseUrl: SERVER_URL,
   credentials: "include", // Includes cookies in requests, if necessary
-  prepareHeaders: async (headers) => {
+  prepareHeaders: async (headers,{getState}) => {
     try {
-      const token = await getToken();
-      console.log("Token:", token); // Debug: Print the token for verification
+      const token = (getState() as RootState).auth.token;
+      // const token = await getToken();
+      // console.log("Token:", token); 
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }

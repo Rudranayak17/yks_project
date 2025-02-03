@@ -16,12 +16,14 @@ import { useRouter } from "expo-router";
 import PostComponent from "@/components/PostComponent";
 import { data } from "@/constants/data";
 import { showToast } from "@/utils/ShowToast";
+import { logout } from "@/store/reducer/auth";
+import { useDispatch } from "react-redux";
 
 const Profile = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal state
   const navigation = useRouter();
-
+const dispatch=useDispatch()
   const handlePickImage = async () => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -47,6 +49,7 @@ const Profile = () => {
 
   const handleLogout = () => {
     // Perform the logout action (e.g., clearing tokens or resetting state)
+    dispatch(logout())
     navigation.replace("/(auth)")
     showToast({
       message: " You have been logged out.",

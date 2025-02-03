@@ -23,10 +23,11 @@ const AddDateBirth: React.FC = () => {
   const handleDateChange = (event: DateTimePickerEvent, date?: Date): void => {
     setShowDatePicker(false);
     if (date) {
-      const formattedDate = date.toLocaleDateString("en-GB"); // Format: DD/MM/YYYY
+      const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
       setSelectedDate(formattedDate);
     }
   };
+  
 
   const handleSubmit = (): void => {
     if (!selectedDate) {

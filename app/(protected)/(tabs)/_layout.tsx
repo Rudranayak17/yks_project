@@ -16,7 +16,7 @@ export default function TabLayout() {
   const navigation = useRouter();
   const user = useSelector(selectCurrentUser);
   const isLoading = useSelector(selectCurrentLoading);
-  console.log(user);
+  console.log(user?.userRole);
   return (
     <Tabs
       screenOptions={{

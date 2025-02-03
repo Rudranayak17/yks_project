@@ -8,47 +8,69 @@ import {
   Platform,
   Dimensions,
   Text,
-  
 } from "react-native";
 
-
 import SubmitButton from "../../components/Submit";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import Animated, { FadeIn, FadeOut, Easing } from "react-native-reanimated";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { useOtpVerifyMutation } from "@/store/api/auth";
+import { showToast } from "@/utils/ShowToast";
 
-const { width } = Dimensions.get("window"); // Get screen width
+const { width } = Dimensions.get("window");
 
 const VerifyOTP: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
-  const inputs = useRef<TextInput[]>([]); // Ref to manage input focus
-
+ const [VerifyOTP]= useOtpVerifyMutation()
+  const [otp, setOtp] = useState<string[]>(Array(4).fill("")); // Changed to 4 digits
+  const inputs = useRef<TextInput[]>([]);
+const {email}=useLocalSearchParams()
   const navigate = useRouter();
-
 
   const handleLogin = async () => {
     const enteredOTP = otp.join("");
     console.log("Entered OTP:", enteredOTP);
-    navigate.navigate({ pathname: "/createResetPassword", params: { otp: enteredOTP } });
+    try {
+      setLoading(true);
+      if (email) {
+        
+        const resp=await VerifyOTP({email:email!,otp:enteredOTP}).unwrap()
+        console.log(resp)
+        if (resp.STS==="200") {
+          showToast({message:resp?.MSG||"",backgroundColor:"green"})
+          navigate.navigate({ pathname: "/createResetPassword", params: { email } });
+          setLoading(false);
+        }else if (resp.STS==="500") {
+          setLoading(false);
+          showToast({message:resp?.MSG||"",backgroundColor:"red"})   
+        }
+      }else{
+        setLoading(false);
+        showToast({message:"email is required",backgroundColor:"red"})
+      }
+  
+      
+    } catch (error) {
+      setLoading(false);
+      showToast({
+        message:"something went wrong",
+        backgroundColor:"red"
+      })
+    }
   };
 
   const handleOtpChange = (text: string, index: number) => {
     const otpCopy = [...otp];
-    otpCopy[index] = text.slice(-1); // Ensure only the last character is added
+    otpCopy[index] = text.slice(-1);
     setOtp(otpCopy);
 
     if (text && index < otp.length - 1) {
-      inputs.current[index + 1]?.focus(); // Move to the next input
+      inputs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyPress = (event: any, index: number) => {
-    // Handle backspace logic
-    if (event.nativeEvent.key === "Backspace") {
-      if (otp[index] === "" && index > 0) {
-        inputs.current[index - 1]?.focus(); // Move to the previous input if current is empty
-      }
+    if (event.nativeEvent.key === "Backspace" && otp[index] === "" && index > 0) {
+      inputs.current[index - 1]?.focus();
     }
   };
 
@@ -58,31 +80,16 @@ const VerifyOTP: React.FC = () => {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          keyboardShouldPersistTaps="handled"
-        >
-          <Animated.View
-            entering={FadeIn.duration(400).easing(Easing.ease)}
-            exiting={FadeOut.duration(300)}
-          >
+        <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+          <Animated.View entering={FadeIn.duration(400).easing(Easing.ease)} exiting={FadeOut.duration(300)}>
             <View>
-              <Text  style={[styles.centerText, styles.title]}>
-                Verification Code
-              </Text>
-              <Text  style={[styles.centerText, styles.subtitle]}>
-                Kindly check your email
-              </Text>
-              <Text style={[styles.centerText, styles.subtitle]}>
-                A 6-digit verification code has been sent to your email.
-              </Text>
+              <Text style={[styles.centerText, styles.title]}>Verification Code</Text>
+              <Text style={[styles.centerText, styles.subtitle]}>Kindly check your email</Text>
+              <Text style={[styles.centerText, styles.subtitle]}>A 4-digit verification code has been sent to your email.</Text>
             </View>
           </Animated.View>
 
-          <Animated.View
-            entering={FadeIn.duration(400).delay(600).easing(Easing.ease)}
-            exiting={FadeOut.duration(300)}
-          >
+          <Animated.View entering={FadeIn.duration(400).delay(600).easing(Easing.ease)} exiting={FadeOut.duration(300)}>
             <View style={styles.inputContainer}>
               {otp.map((digit, index) => (
                 <TextInput
@@ -90,25 +97,18 @@ const VerifyOTP: React.FC = () => {
                   value={digit}
                   onChangeText={(text) => handleOtpChange(text, index)}
                   onKeyPress={(event) => handleKeyPress(event, index)}
-                  style={[styles.otpInput,]} // Apply theme color to text
+                  style={styles.otpInput}
                   keyboardType="numeric"
                   maxLength={1}
                   textAlign="center"
-                  ref={(ref) => (inputs.current[index] = ref)} // Assign ref to each input
+                  ref={(ref) => (inputs.current[index] = ref)}
                 />
               ))}
             </View>
           </Animated.View>
 
-          <Animated.View
-            entering={FadeIn.duration(400).delay(1000).easing(Easing.ease)}
-            exiting={FadeOut.duration(300)}
-          >
-            <SubmitButton
-              title="Submit"
-              onPress={handleLogin}
-              loading={loading}
-            />
+          <Animated.View entering={FadeIn.duration(400).delay(1000).easing(Easing.ease)} exiting={FadeOut.duration(300)}>
+            <SubmitButton title="Submit" onPress={handleLogin} disabled={loading} loading={loading} />
           </Animated.View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -147,11 +147,11 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   otpInput: {
-    width: width * 0.12, // Set width relative to the screen size
+    width: width * 0.15, // Adjusted width for 4-digit input
     height: 50,
     borderWidth: 1,
     borderColor: "gray",
-    color:"#000",
+    color: "#000",
     borderRadius: 5,
     fontSize: 18,
   },

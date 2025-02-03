@@ -56,10 +56,11 @@ const AddDetail: React.FC = () => {
   const handleDateChange = (event: any, selectedDate: Date | undefined) => {
     setShowDatePicker(false);
     if (selectedDate) {
-      const formattedDate = selectedDate.toLocaleDateString("en-GB"); // Format as dd/mm/yyyy
+      const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
       handleInputChange("anniversaryDate", formattedDate);
     }
   };
+  
 
   const validateForm = () => {
     const { designation, phone, whatsappNo, vote, anniversaryDate, address } = formData;

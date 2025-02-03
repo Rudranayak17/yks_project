@@ -11,12 +11,14 @@ export interface User {
   address?: string;
 }
 export interface CONTENT {
+
   token?: string;
   username: string;
   userId: number | string;
   fullName: string;
   userRole: "ROLE_ADMIN"|"ROLE_USER"|"ROLE_SUPER_ADMIN";
   userProfilePic: string;
+  enabled?:boolean
 }
 export interface contact {
   name: string;

@@ -17,6 +17,7 @@ const _layout = () => {
       }}
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="created" options={{ headerShown: false }} />
       <Stack.Screen
         name="chat"
         options={{ headerShown: true, headerTitle: "Community Alpha" }}

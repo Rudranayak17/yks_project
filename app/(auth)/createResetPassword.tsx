@@ -10,11 +10,13 @@ import {
 } from "react-native";
 
 import SubmitButton from "../../components/Submit";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import Animated, { FadeIn, FadeOut, Easing } from "react-native-reanimated";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 import PasswordInput from "@/components/PasswordInput";
+import { useResetPasswordMutation } from "@/store/api/auth";
+import { showToast } from "@/utils/ShowToast";
 
 const { width } = Dimensions.get("window"); // Get screen width
 
@@ -23,8 +25,9 @@ const CreateResetPassword: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
-
+const {email}=useLocalSearchParams()
   const navigate = useRouter();
+  const [resetPassword]=useResetPasswordMutation()
   const textColor = useThemeColor({}, "text"); // Dynamic text color based on theme
 
   const handleResetPassword = async () => {
@@ -35,9 +38,26 @@ const CreateResetPassword: React.FC = () => {
 
     setLoading(true);
     console.log("Password Reset:", password);
+
+try {
+  const resp= await resetPassword({email:email!,password}).unwrap()
+  if (resp.STS) {
+    showToast({message:resp.MSG,backgroundColor:"green"})
     // Add your reset password logic here, such as API call
     setLoading(false);
     navigate.navigate("/(auth)"); // Navigate to login screen after password reset
+  }else{
+    console.log(resp)
+    showToast({message:resp?.MSG||"something went wrong",backgroundColor:"red"})
+    setLoading(false);
+  }
+} catch (error) {
+  console.log(error)
+  showToast({message:"something went wrong",backgroundColor:"red"})
+  setLoading(false);
+}
+
+
   };
 
   return (

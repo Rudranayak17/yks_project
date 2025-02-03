@@ -6,8 +6,12 @@ import SubmitButton from "@/components/Submit";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useRegistrationMutation } from "@/store/api/auth";
+import { showToast } from "@/utils/ShowToast";
+import { setCredentials } from "@/store/reducer/auth";
+import { useDispatch } from "react-redux";
 
 const AddProfile = () => {
+  const dispatch = useDispatch();
   const navigation = useRouter();
   const [createUser] = useRegistrationMutation();
   const local = useLocalSearchParams();
@@ -34,7 +38,8 @@ const AddProfile = () => {
   // console.log(local);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const submitHandler = async () => {
-    console.log({        address: address,
+    console.log({
+      address: address,
       birthdate,
       anniversary: anniversaryDate,
       designation,
@@ -47,12 +52,13 @@ const AddProfile = () => {
       member: true,
       password,
       phoneNo: phone,
-      profile_pic: "This is the profileImage",
+      profile_pic: profileImage,
       snapChat: snapchat,
 
       twitter,
-      voter: true, 
-      whatsappNo,})
+      voter: true,
+      whatsappNo,
+    });
     try {
       const resp = await createUser({
         address: address,
@@ -62,20 +68,34 @@ const AddProfile = () => {
         email,
         facebook,
         fullName: name,
-        gender:"MALE",
+        gender: "MALE",
         instagram,
         linkedin,
         member: true,
         password,
         phoneNo: phone,
-        profile_pic: "This is the profileImage",
+        profile_pic: profileImage,
         snapChat: snapchat,
 
         twitter,
-        voter: true, 
+        voter: true,
         whatsappNo,
-      });
+      }).unwrap();
       console.log(resp);
+      if (resp.STS === "200") {
+        dispatch(setCredentials(resp));
+        navigation.replace("/created");
+      } else if (resp.STS === "500") {
+        showToast({
+          message: resp.MSG,
+          backgroundColor: "red",
+        });
+      } else {
+        showToast({
+          message: "something went wrong",
+          backgroundColor: "red",
+        });
+      }
     } catch (error) {
       console.log(error);
     }

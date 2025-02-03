@@ -28,9 +28,39 @@ const asyncStorageUtils = {
     }
 };
 
+const asyncStorageUserIDUtils = {
+    storeUserID: async (userID: string): Promise<void> => {
+        try {
+            await AsyncStorage.setItem("userID", userID);
+        } catch (error) {
+            console.error("Error storing userID:", error);
+        }
+    },
+    removeUserID: async (): Promise<void> => {
+        try {
+            await AsyncStorage.removeItem("userID");
+        } catch (error) {
+            console.error("Error removing userID:", error);
+        }
+    },
+    getUserID: async (): Promise<string | null> => {
+        try {
+            return await AsyncStorage.getItem("userID");
+        } catch (error) {
+            console.error("Error retrieving userID:", error);
+            return null;
+        }
+    }
+};
+
 // Function to initialize token from AsyncStorage
 const initializeToken = async (): Promise<string | null> => {
     return await asyncStorageUtils.getToken();
+};
+
+const initializeUserId = async (): Promise<string | null> => {
+
+    return await asyncStorageUserIDUtils.getUserID();
 };
 
 // Initial state for the auth slice
@@ -62,6 +92,11 @@ const authSlice = createSlice({
                     console.error("Failed to store token:", error)
                 );
             }
+            if (CONTENT.userId) {
+                asyncStorageUserIDUtils.storeUserID(CONTENT.userId.toString()).catch((error) =>
+                    console.error("Failed to store userID:", error)
+                );
+            }
         },
         logout: (state) => {
             state.token = null;
@@ -70,9 +105,12 @@ const authSlice = createSlice({
             state.isLoading = false;
             state.user = null;
 
-            // Remove token from AsyncStorage
+            // Remove token and userID from AsyncStorage
             asyncStorageUtils.removeToken().catch((error) =>
                 console.error("Failed to remove token:", error)
+            );
+            asyncStorageUserIDUtils.removeUserID().catch((error) =>
+                console.error("Failed to remove userID:", error)
             );
         },
         authError: (state) => {
@@ -90,21 +128,27 @@ const authSlice = createSlice({
             state.isAuthenticated = !!action.payload;
             state.isLoading = false;
         },
+        setUserID: (state, action: PayloadAction<string | null>) => {
+            state.user = { ...state.user, userId: action.payload };
+        },
     },
 });
 
-// Async thunk to initialize token on app load
+// Async thunk to initialize token and userID on app load
 export const initializeAuth = (): any => async (dispatch: any) => {
     try {
         const token = await initializeToken();
+        const userId = await initializeUserId();
+        console.log(userId)
         dispatch(authSlice.actions.setToken(token));
+        dispatch(authSlice.actions.setUserID(userId));
     } catch (error) {
-        console.error("Failed to initialize token:", error);
+        console.error("Failed to initialize authentication:", error);
     }
 };
 
 // Export actions and selectors
-export const { setCredentials, logout, authError, clearError } = authSlice.actions;
+export const { setCredentials, logout, authError, clearError, setToken, setUserID } = authSlice.actions;
 
 export const selectCurrentMessage = (state: { auth: AuthState }) => state.auth.message;
 export const selectCurrentUser = (state: { auth: AuthState }) => state.auth.user;

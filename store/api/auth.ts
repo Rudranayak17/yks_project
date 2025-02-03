@@ -31,7 +31,7 @@ export const authApiSlice = apiWithTag.injectEndpoints({
     // Signup Endpoint
     registration: builder.mutation<UserResponse, UserProfile>({
       query: (credential) => ({
-        url: `/auth/society/${"1"}`,
+        url: `/auth/user/register/society/1`,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,42 +40,44 @@ export const authApiSlice = apiWithTag.injectEndpoints({
       }),
     }),
 
-    forgetPassword: builder.mutation<DataResponse, forgetPasswordCredentails>({
+    forgetPassword: builder.mutation<UserResponse, forgetPasswordCredentails>({
       query: (credential) => ({
-        url: "/api/v1/user/forgotpassword",
+        url: "/auth/send-otp",
+        method: "POST",
+        params:credential,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: credential,
+      }),
+    }),
+
+    otpVerify: builder.mutation<UserResponse, verifyforgetPasswordlOTP>({
+      query: (credential) => ({
+        url: "/auth/validate-otp",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: credential,
+        params:credential,
+        // body: credential,
       }),
     }),
 
-    otpVerify: builder.mutation<DataResponse, verifyforgetPasswordlOTP>({
+    resetPassword: builder.mutation<UserResponse, verifyforgetPasswordlOTP>({
       query: (credential) => ({
-        url: "/api/v1/user/otp-check",
+        url: "/auth/changePassword",
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: credential,
-      }),
-    }),
-
-    resetPassword: builder.mutation<DataResponse, verifyforgetPasswordlOTP>({
-      query: (credential) => ({
-        url: "/api/v1/user/reset-password",
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: credential,
+        params: credential,
       }),
     }),
 
     getMyProfile: builder.query<UserResponse, void>({
-      query: () => ({
-        url: "/api/v1/user/profile",
+      query: ({id}) => ({
+        url: `/user/${id}`,
         method: "GET",
       }),
       providesTags: ["user"],

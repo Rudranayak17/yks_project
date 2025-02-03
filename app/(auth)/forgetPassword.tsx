@@ -12,6 +12,8 @@ import EmailInput from "../../components/EmailInput";
 import SubmitButton from "../../components/Submit";
 import { useRouter } from "expo-router";
 import Animated, { FadeIn, FadeOut, Easing } from "react-native-reanimated";
+import { useForgetPasswordMutation } from "@/store/api/auth";
+import { showToast } from "@/utils/ShowToast";
 
 interface ForgetPasswordProps {
   title?: string;
@@ -24,11 +26,26 @@ const ForgetPassword: React.FC<ForgetPasswordProps> = ({
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
-
+  const [forgetEmail] = useForgetPasswordMutation();
   const navigate = useRouter();
 
   const handleLogin = async () => {
-    navigate.navigate({ pathname: "/verifyOTP", params: { email } });
+    setLoading(true);
+    try {
+      const resp = await forgetEmail({ email }).unwrap();
+      console.log(resp);
+      if (resp.STS === "200") {
+        showToast({
+          message: resp.MSG || "OTP sent to your email account",
+          backgroundColor: "green",
+        });
+        navigate.navigate({ pathname: "/verifyOTP", params: { email } });
+      }
+    } catch (error) {
+      showToast({ message: "Failed to send OTP", backgroundColor: "red" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,13 +53,12 @@ const ForgetPassword: React.FC<ForgetPasswordProps> = ({
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Animated Title and Subtitle */}
           <Animated.View
             entering={FadeIn.duration(400).easing(Easing.ease)}
             exiting={FadeOut.duration(300)}
@@ -55,7 +71,6 @@ const ForgetPassword: React.FC<ForgetPasswordProps> = ({
             </View>
           </Animated.View>
 
-          {/* Animated Email Input */}
           <Animated.View
             entering={FadeIn.duration(400).delay(600).easing(Easing.ease)}
             exiting={FadeOut.duration(300)}
@@ -66,19 +81,20 @@ const ForgetPassword: React.FC<ForgetPasswordProps> = ({
                 value={email}
                 onChangeText={setEmail}
                 placeholder="examplexyz@gmail.com"
+                editable={!loading}
               />
             </View>
           </Animated.View>
 
-          {/* Animated Submit Button */}
           <Animated.View
             entering={FadeIn.duration(400).delay(1000).easing(Easing.ease)}
             exiting={FadeOut.duration(300)}
           >
             <SubmitButton
-              title="Submit"
+              title={loading ? "Submitting..." : "Submit"}
               onPress={handleLogin}
               loading={loading}
+              disabled={loading || !email}
             />
           </Animated.View>
         </ScrollView>
