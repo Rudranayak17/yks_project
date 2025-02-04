@@ -52,6 +52,7 @@ const Index: React.FC<IndexProps> = ({
 
   const handleLogin = async () => {
     // Validate input using yup
+    Keyboard.dismiss
     try {
       await validationSchema.validate({ email, password }, { abortEarly: false });
 
@@ -59,7 +60,9 @@ const Index: React.FC<IndexProps> = ({
       const resp = await login({ email, password });
 
       if (resp?.data) {
+        console.log(resp.data)
         const { STS, MSG, CONTENT } = resp.data;
+
         if (STS === "200" && CONTENT.enabled) {
           showToast({ message: "User login successfully", backgroundColor: "green" });
           dispatch(setCredentials(resp.data));
@@ -88,7 +91,7 @@ const Index: React.FC<IndexProps> = ({
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    
       <View style={styles.container}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -142,7 +145,7 @@ const Index: React.FC<IndexProps> = ({
           </ScrollView>
         </KeyboardAvoidingView>
       </View>
-    </TouchableWithoutFeedback>
+   
   );
 };
 

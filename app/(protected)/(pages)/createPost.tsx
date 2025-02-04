@@ -15,6 +15,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useCreatePostMutation } from "@/store/api/post";
+import { showToast } from "@/utils/ShowToast";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "@/store/reducer/auth";
 
 type CreatePostParams = {
   selectedImage?: string;
@@ -23,26 +27,53 @@ type CreatePostParams = {
 const CreatePost: React.FC = () => {
   const params = useLocalSearchParams() as CreatePostParams;
   const router = useRouter();
-  const { selectedImage } = params; // Destructure selectedImage from params
+  const userdetail = useSelector(selectCurrentUser)
+  const [createPost] = useCreatePostMutation();
+  const { selectedImage } = params;
+
+  const [title, setTitle] = useState<string>("");
   const [postContent, setPostContent] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleCreatePost = () => {
+  const handleCreatePost = async () => {
+    if (!title.trim()) {
+      Alert.alert("Error", "Post title cannot be empty.");
+      return;
+    }
     if (!postContent.trim()) {
       Alert.alert("Error", "Post content cannot be empty.");
       return;
     }
 
     setLoading(true);
+console.log({
+  societyId:"2",
 
-    // Simulate API call or post creation logic
-    setTimeout(() => {
-      setLoading(false);
-      Alert.alert("Post Created", "Your post is awaiting admin approval.");
-
-      setPostContent(""); // Clear input after post creation
+  id:userdetail?.userId,
+    title:title,
+    content: postContent,
+    postImage: selectedImage,
+  })
+    try {
+     const resp= await createPost({
+      societyId:"1",
+      id:userdetail?.userId,
+        title:title,
+        content: postContent,
+        postImage: selectedImage,
+      }).unwrap();
+ 
+console.log(resp)
+      Alert.alert("Success", "Your post has been created.");
+      setTitle("");
+      setPostContent("");
       router.replace("/profile");
-    }, 2000);
+    } catch (error) {
+      console.log("eror",error);
+      showToast({message: "Failed to create post.",backgroundColor:"red"});
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,6 +88,16 @@ const CreatePost: React.FC = () => {
             {selectedImage && (
               <Image source={{ uri: selectedImage }} style={styles.image} />
             )}
+
+            {/* Title Input */}
+            <TextInput
+              style={styles.titleInput}
+              placeholder="Enter post title..."
+              value={title}
+              onChangeText={setTitle}
+            />
+
+            {/* Content Input */}
             <TextInput
               style={styles.input}
               placeholder="Write something about this image..."
@@ -64,6 +105,7 @@ const CreatePost: React.FC = () => {
               value={postContent}
               onChangeText={setPostContent}
             />
+
             <Pressable
               style={[styles.createButton, loading && styles.disabledButton]}
               onPress={handleCreatePost}
@@ -100,6 +142,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
   },
+  titleInput: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    padding: 10,
+    fontSize: 16,
+    marginBottom: 15,
+  },
   input: {
     height: 100,
     borderWidth: 1,
@@ -107,6 +158,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     textAlignVertical: "top",
+    fontSize: 16,
     marginBottom: 20,
   },
   createButton: {
