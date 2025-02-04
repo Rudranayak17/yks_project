@@ -36,6 +36,9 @@ const Create = () => {
     ImagePicker.useMediaLibraryPermissions();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  const [uploading, setUploading] = useState(false);
+  const [downloadURL, setDownloadURL] = useState<string | null>(null);
+
   // Request permissions for both ImagePicker and MediaLibrary
   const requestPermissions = async () => {
     if (Platform.OS === "android" && permissionResponse.status !== "granted") {
@@ -115,6 +118,9 @@ const Create = () => {
       }
     }
   };
+
+  
+
 
   return (
     <SafeAreaView style={styles.container}>

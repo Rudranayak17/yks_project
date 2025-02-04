@@ -1,0 +1,144 @@
+{
+  "project_info": {
+    "project_number": "778505169540",
+    "firebase_url": "https://autocare-c1756-default-rtdb.firebaseio.com",
+    "project_id": "autocare-c1756",
+    "storage_bucket": "autocare-c1756.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778505169540:android:452013fd46f2de4575f0d1",
+        "android_client_info": {
+          "package_name": "com.Moter.autocare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbk_3uh6bp1VLd6XtsTdCI5dyhxW0_pPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778505169540:android:481c0a068fe364cc75f0d1",
+        "android_client_info": {
+          "package_name": "com.guruprasad.autocare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbk_3uh6bp1VLd6XtsTdCI5dyhxW0_pPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778505169540:android:24e64de79343f52275f0d1",
+        "android_client_info": {
+          "package_name": "com.guruprasad.hosteladmin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbk_3uh6bp1VLd6XtsTdCI5dyhxW0_pPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778505169540:android:4b3de76eb852ad6b75f0d1",
+        "android_client_info": {
+          "package_name": "com.guruprasad.hostelhub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbk_3uh6bp1VLd6XtsTdCI5dyhxW0_pPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778505169540:android:bc0f48f62abb8e5175f0d1",
+        "android_client_info": {
+          "package_name": "com.quickhire.yks"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbk_3uh6bp1VLd6XtsTdCI5dyhxW0_pPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778505169540:android:488ba6324790037675f0d1",
+        "android_client_info": {
+          "package_name": "com.taskease.collegeapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbk_3uh6bp1VLd6XtsTdCI5dyhxW0_pPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:778505169540:android:7da8e341a44cd6ca75f0d1",
+        "android_client_info": {
+          "package_name": "com.taskease.touristapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbk_3uh6bp1VLd6XtsTdCI5dyhxW0_pPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

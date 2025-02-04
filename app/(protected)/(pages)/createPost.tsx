@@ -19,6 +19,8 @@ import { useCreatePostMutation } from "@/store/api/post";
 import { showToast } from "@/utils/ShowToast";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/store/reducer/auth";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "@/utils/config";
 
 type CreatePostParams = {
   selectedImage?: string;
@@ -27,13 +29,63 @@ type CreatePostParams = {
 const CreatePost: React.FC = () => {
   const params = useLocalSearchParams() as CreatePostParams;
   const router = useRouter();
-  const userdetail = useSelector(selectCurrentUser)
+  const userdetail = useSelector(selectCurrentUser);
   const [createPost] = useCreatePostMutation();
   const { selectedImage } = params;
 
   const [title, setTitle] = useState<string>("");
   const [postContent, setPostContent] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [uploading, setUploading] = useState<boolean>(false);
+
+  console.log("Selected Image:", selectedImage);
+
+  const uploadImage = async (): Promise<string | null> => {
+    if (!selectedImage) {
+      Alert.alert("No image selected", "Please select an image to upload.");
+      return null;
+    }
+
+    setUploading(true);
+    try {
+      console.log("Starting image upload...");
+      const response = await fetch(selectedImage);
+      const blob = await response.blob();
+
+      const filename = `yks/postimages/${Date.now()}.jpg`;
+      const storageRef = ref(storage, filename);
+
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+      console.log("Uploading image...");
+
+      return new Promise((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`Upload progress: ${progress.toFixed(2)}%`);
+          },
+          (error) => {
+            console.error("Upload failed:", error);
+            Alert.alert("Upload failed", "Something went wrong. Please try again.");
+            setUploading(false);
+            reject(null);
+          },
+          async () => {
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            console.log("Image successfully uploaded. URL:", url);
+            setUploading(false);
+            resolve(url);
+          }
+        );
+      });
+    } catch (error) {
+      console.error("Upload error:", error);
+      Alert.alert("Upload failed", "Something went wrong. Please try again.");
+      setUploading(false);
+      return null;
+    }
+  };
 
   const handleCreatePost = async () => {
     if (!title.trim()) {
@@ -46,31 +98,34 @@ const CreatePost: React.FC = () => {
     }
 
     setLoading(true);
-console.log({
-  societyId:"2",
+    console.log("Creating post with data:", { title, postContent });
 
-  id:userdetail?.userId,
-    title:title,
-    content: postContent,
-    postImage: selectedImage,
-  })
     try {
-     const resp= await createPost({
-      societyId:"1",
-      id:userdetail?.userId,
-        title:title,
+      const imageUrl = await uploadImage();
+      if (!imageUrl) {
+        throw new Error("Image upload failed.");
+      }
+
+      const postData = {
+        societyId: userdetail?.societyId,
+        id: userdetail?.userId,
+        title: title,
         content: postContent,
-        postImage: selectedImage,
-      }).unwrap();
- 
-console.log(resp)
+        postImage: imageUrl,
+      };
+
+      console.log("Final Post Data:", postData);
+
+      const resp = await createPost(postData).unwrap();
+      console.log("Post creation response:", resp);
+
       Alert.alert("Success", "Your post has been created.");
       setTitle("");
       setPostContent("");
       router.replace("/profile");
     } catch (error) {
-      console.log("eror",error);
-      showToast({message: "Failed to create post.",backgroundColor:"red"});
+      console.error("Post creation error:", error);
+      showToast({ message: "Failed to create post.", backgroundColor: "red" });
     } finally {
       setLoading(false);
     }
@@ -85,9 +140,7 @@ console.log(resp)
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.container}>
-            {selectedImage && (
-              <Image source={{ uri: selectedImage }} style={styles.image} />
-            )}
+            {selectedImage && <Image source={{ uri: selectedImage }} style={styles.image} />}
 
             {/* Title Input */}
             <TextInput
@@ -107,15 +160,11 @@ console.log(resp)
             />
 
             <Pressable
-              style={[styles.createButton, loading && styles.disabledButton]}
+              style={[styles.createButton, (loading || uploading) && styles.disabledButton]}
               onPress={handleCreatePost}
-              disabled={loading}
+              disabled={loading || uploading}
             >
-              {loading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.createButtonText}>Create Post</Text>
-              )}
+              {loading || uploading ? <ActivityIndicator color="#fff" /> : <Text style={styles.createButtonText}>Create Post</Text>}
             </Pressable>
           </View>
         </ScrollView>
