@@ -52,7 +52,7 @@ const Index: React.FC<IndexProps> = ({
 
   const handleLogin = async () => {
     // Validate input using yup
-    Keyboard.dismiss
+    Keyboard.dismiss()
     try {
       await validationSchema.validate({ email, password }, { abortEarly: false });
 

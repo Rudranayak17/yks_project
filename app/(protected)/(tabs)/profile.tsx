@@ -16,14 +16,17 @@ import { useRouter } from "expo-router";
 import PostComponent from "@/components/PostComponent";
 import { data } from "@/constants/data";
 import { showToast } from "@/utils/ShowToast";
-import { logout } from "@/store/reducer/auth";
-import { useDispatch } from "react-redux";
+import { logout, selectCurrentUser } from "@/store/reducer/auth";
+import { useDispatch, useSelector } from "react-redux";
+import PostGrid from "@/components/PostGrid";
 
 const Profile = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal state
   const navigation = useRouter();
-const dispatch=useDispatch()
+  const dispatch = useDispatch();
+
+  const userdetail = useSelector(selectCurrentUser);
   const handlePickImage = async () => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -49,8 +52,8 @@ const dispatch=useDispatch()
 
   const handleLogout = () => {
     // Perform the logout action (e.g., clearing tokens or resetting state)
-    dispatch(logout())
-    navigation.replace("/(auth)")
+    dispatch(logout());
+    navigation.replace("/(auth)");
     showToast({
       message: " You have been logged out.",
       backgroundColor: "green",
@@ -83,8 +86,8 @@ const dispatch=useDispatch()
           </Pressable>
 
           <View style={styles.userInfo}>
-            <Text style={styles.name}>Name Here</Text>
-            <Text style={styles.bio}>Enter your bio...</Text>
+            <Text style={styles.name}>{userdetail?.fullName}</Text>
+            {/* <Text style={styles.bio}>Enter your bio...</Text> */}
           </View>
 
           <View style={styles.buttonsContainer}>
@@ -113,15 +116,7 @@ const dispatch=useDispatch()
 
         <View style={styles.divider}></View>
 
-        {data.map((post) => (
-          <View key={post.id} style={styles.postContainer}>
-            <PostComponent
-              title={post.title}
-              content={post.content}
-              image={post.image}
-            />
-          </View>
-        ))}
+        <PostGrid posts={data} />
       </View>
 
       {/* Logout Confirmation Modal */}
