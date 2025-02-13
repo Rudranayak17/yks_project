@@ -22,7 +22,14 @@ const _layout = () => {
         name="chat"
         options={{ headerShown: true, headerTitle: "Community Alpha" }}
       />
-      <Stack.Screen name="createPost" options={{ headerShown: true,headerTitle: "Create Post Detail" }} />
+      <Stack.Screen
+        name="editProfile"
+        options={{ headerShown: true, headerTitle: "Edit Profile" }}
+      />
+      <Stack.Screen
+        name="createPost"
+        options={{ headerShown: true, headerTitle: "Create Post Detail" }}
+      />
     </Stack>
   );
 };

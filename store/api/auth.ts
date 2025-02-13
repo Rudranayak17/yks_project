@@ -83,15 +83,34 @@ export const authApiSlice = apiWithTag.injectEndpoints({
       providesTags: ["user"],
     }),
 
-    updateProfilePic: builder.mutation<UserResponse, {userId: string, profile_pic: string}>({
+    updateProfilePic: builder.mutation<
+      UserResponse,
+      { userId: string; profile_pic: string }
+    >({
       query: (credential) => {
         // Log the credential object
-        console.log('Update Profile Pic Credential:', credential);
-        
+        console.log("Update Profile Pic Credential:", credential);
+
         return {
           url: `/user/update/profilePic/${credential.userId}`,
           method: "PUT",
-          body: { profile_pic: credential.profile_pic }, 
+          body: { profile_pic: credential.profile_pic },
+        };
+      },
+      invalidatesTags: ["user"],
+    }),
+    updateBannerPic: builder.mutation<
+      UserResponse,
+      { userId: string; profile_pic: string }
+    >({
+      query: (credential) => {
+        // Log the credential object
+        console.log("Update Profile Pic Credential:", credential);
+
+        return {
+          url: `/user/update/userBanner/${credential.userId}`,
+          method: "PUT",
+          body: { bannerUrl: credential.bannerUrl },
         };
       },
       invalidatesTags: ["user"],
@@ -133,4 +152,5 @@ export const {
   useUpdateProfilePicMutation,
   useVerifyEmailMutation,
   useSendContactMutation,
+  useUpdateBannerPicMutation
 } = authApiSlice;

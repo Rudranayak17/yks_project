@@ -64,11 +64,21 @@ const PostGrid: React.FC<PostGridProps> = ({ posts }) => {
         keyExtractor={(item) => item.id}
         numColumns={3}
         estimatedItemSize={110}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => openModal(item)}>
-            <Image source={{ uri: item.image }} style={styles.gridImage} />
-          </TouchableOpacity>
-        )}
+        renderItem={({ item }) => {
+          return (
+            <TouchableOpacity
+              onPress={() => {
+                console.log(item.id);
+                openModal(item);
+              }}
+            >
+              <Image
+                source={{ uri: item.postImage }}
+                style={styles.gridImage}
+              />
+            </TouchableOpacity>
+          );
+        }}
       />
 
       <Modal
@@ -81,7 +91,7 @@ const PostGrid: React.FC<PostGridProps> = ({ posts }) => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>{selectedPost?.title}</Text>
             <Image
-              source={{ uri: selectedPost?.image }}
+              source={{ uri: selectedPost?.postImage }}
               style={styles.modalImage}
             />
             <Text style={styles.modalText}>{selectedPost?.content}</Text>
@@ -109,7 +119,11 @@ const PostGrid: React.FC<PostGridProps> = ({ posts }) => {
             </View>
 
             <View style={styles.postFooter}>
-              <ButtonWithIcon color={"#000"} label="Like" iconName="heart-outline" />
+              <ButtonWithIcon
+                color={"#000"}
+                label="Like"
+                iconName="heart-outline"
+              />
               <ButtonWithIcon
                 color={"#000"}
                 label="Comment"
@@ -128,10 +142,10 @@ const PostGrid: React.FC<PostGridProps> = ({ posts }) => {
                   multiline
                   maxLength={500}
                 />
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[
                     styles.sendButton,
-                    !newComment.trim() && styles.sendButtonDisabled
+                    !newComment.trim() && styles.sendButtonDisabled,
                   ]}
                   onPress={handleAddComment}
                   disabled={!newComment.trim()}

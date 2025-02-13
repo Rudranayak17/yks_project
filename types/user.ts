@@ -16,6 +16,7 @@ export interface CONTENT {
   username: string;
   userId: number | string;
   fullName: string;
+  bannerUrl:string
   userRole: "ROLE_ADMIN"|"ROLE_USER"|"ROLE_SUPER_ADMIN";
   userProfilePic: string;
   enabled?:boolean
