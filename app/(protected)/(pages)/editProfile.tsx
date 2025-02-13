@@ -1,152 +1,199 @@
-import { View, Text, TextInput, Button, ScrollView, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+  Platform,
+} from "react-native";
+import React, { useState, useEffect } from "react";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
+import { FontAwesome } from "@expo/vector-icons";
+import {
+  useGetMyProfileQuery,
+  useUpdateProfileMutation,
+} from "@/store/api/auth";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/store/reducer/auth";
+import { useRouter } from "expo-router";
 
 const EditProfile = () => {
-  const userdetail = useSelector(selectCurrentUser);
-  const [profile, setProfile] = useState({
-    fullName: "Guruprasad",
-    email: "guruprasad@gmail.com",
-    phoneNo: "9697981746",
-    designation: "Software Developer",
-    address: "This is the address",
-    birthdate: "2024-04-23",
-    anniversary: "2024-04-21",
-    gender: "MALE",
-    facebook: "Facebook",
-    twitter: "twitter facebook",
-    instagram: "instagram dfgd",
-    linkedin: "linkedin gfd",
-    snapChat: "snapChat gfg",
-    whatsappNo: "9697981738",
+  const router = useRouter();
+  const userData = useSelector(selectCurrentUser);
+  const { data, isLoading, isError } = useGetMyProfileQuery({
+    id: userData?.userId,
   });
+  const [updateProfile] = useUpdateProfileMutation();
+  const formatDate = (timestamp: string | number) => {
+    if (!timestamp) return "";
+    const date = new Date(timestamp);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(date.getDate()).padStart(2, "0")}`;
+  };
+
+  const [profile, setProfile] = useState({
+    fullName: "",
+    phoneNo: "",
+    designation: "",
+    address: "",
+    birthdate: "",
+    anniversary: "",
+    gender: "",
+    facebook: "",
+    twitter: "",
+    instagram: "",
+    linkedin: "",
+    snapChat: "",
+    whatsappNo: "",
+  });
+
+  const [showDatePicker, setShowDatePicker] = useState({
+    birthdate: false,
+    anniversary: false,
+  });
+
+  useEffect(() => {
+    if (data) {
+      const {
+        fullName,
+        phoneNo,
+        designation,
+        address,
+        birthdate,
+        anniversary,
+        gender,
+        facebook,
+        twitter,
+        instagram,
+        linkedin,
+        snapChat,
+        whatsappNo,
+      } = data.CONTENT;
+
+      setProfile({
+        fullName: fullName || "",
+        phoneNo: phoneNo || "",
+        designation: designation || "",
+        address: address || "",
+        birthdate: formatDate(birthdate) || "",
+        anniversary: formatDate(anniversary) || "",
+        gender: gender || "",
+        facebook: facebook || "",
+        twitter: twitter || "",
+        instagram: instagram || "",
+        linkedin: linkedin || "",
+        snapChat: snapChat || "",
+        whatsappNo: whatsappNo || "",
+      });
+    }
+  }, [data]);
 
   const handleChange = (key: string, value: string) => {
     setProfile({ ...profile, [key]: value });
   };
 
-  const handleSubmit = () => {
-    console.log("Updated Profile:", profile);
-    // API call to update profile data
+  const handleDateChange = (
+    event: DateTimePickerEvent,
+    date?: Date,
+    key?: "birthdate" | "anniversary"
+  ) => {
+    setShowDatePicker({ ...showDatePicker, [key]: false });
+    if (date && key) {
+      setProfile({ ...profile, [key]: formatDate(date) });
+    }
   };
+
+  const handleSubmit = async () => {
+    try {
+      const user = await updateProfile({
+        id: userData?.userId,
+        profile,
+      }).unwrap();
+      console.log("Updated Profile:", user);
+      if (user.STS === "500") {
+        Alert.alert("Faild", user.MSG);
+        return;
+      }
+      Alert.alert("Success", "Profile Updated!");
+      router.navigate("/profile");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      Alert.alert("Error", "Failed to update profile. Please try again.");
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#007bff"
+        style={{ marginTop: 50 }}
+      />
+    );
+  }
+
+  if (isError) {
+    return (
+      <Text style={{ textAlign: "center", marginTop: 50, color: "red" }}>
+        Failed to load profile data
+      </Text>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Edit Profile</Text>
 
-      {/* Full Name */}
-      <TextInput
-        value={profile.fullName}
-        onChangeText={(text) => handleChange("fullName", text)}
-        placeholder="Full Name"
-        style={styles.input}
-      />
+      {Object.keys(profile).map((key) => {
+        if (key === "birthdate" || key === "anniversary") {
+          return (
+            <View key={key} style={styles.datePickerContainer}>
+              <TouchableOpacity
+                onPress={() =>
+                  setShowDatePicker({ ...showDatePicker, [key]: true })
+                }
+                style={styles.datePicker}
+              >
+                <FontAwesome name="calendar" size={20} color="#007bff" />
+                <Text style={styles.dateText}>
+                  {profile[key] || "Select Date"}
+                </Text>
+              </TouchableOpacity>
+              {showDatePicker[key] && (
+                <DateTimePicker
+                  value={profile[key] ? new Date(profile[key]) : new Date()}
+                  mode="date"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={(event, date) =>
+                    handleDateChange(
+                      event,
+                      date,
+                      key as "birthdate" | "anniversary"
+                    )
+                  }
+                  maximumDate={key === "birthdate" ? new Date() : undefined} // Restrict future dates only for birthdate
+                />
+              )}
+            </View>
+          );
+        }
+        return (
+          <TextInput
+            key={key}
+            value={profile[key]}
+            onChangeText={(text) => handleChange(key, text)}
+            placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+            style={styles.input}
+          />
+        );
+      })}
 
-      {/* Email */}
-      <TextInput
-        value={profile.email}
-        onChangeText={(text) => handleChange("email", text)}
-        placeholder="Email"
-        keyboardType="email-address"
-        style={styles.input}
-      />
-
-      {/* Phone Number */}
-      <TextInput
-        value={profile.phoneNo}
-        onChangeText={(text) => handleChange("phoneNo", text)}
-        placeholder="Phone Number"
-        keyboardType="phone-pad"
-        style={styles.input}
-      />
-
-      {/* Designation */}
-      <TextInput
-        value={profile.designation}
-        onChangeText={(text) => handleChange("designation", text)}
-        placeholder="Designation"
-        style={styles.input}
-      />
-
-      {/* Address */}
-      <TextInput
-        value={profile.address}
-        onChangeText={(text) => handleChange("address", text)}
-        placeholder="Address"
-        multiline
-        style={[styles.input, styles.textArea]}
-      />
-
-      {/* Birthdate */}
-      <TextInput
-        value={profile.birthdate}
-        onChangeText={(text) => handleChange("birthdate", text)}
-        placeholder="Birthdate (YYYY-MM-DD)"
-        style={styles.input}
-      />
-
-      {/* Anniversary */}
-      <TextInput
-        value={profile.anniversary}
-        onChangeText={(text) => handleChange("anniversary", text)}
-        placeholder="Anniversary (YYYY-MM-DD)"
-        style={styles.input}
-      />
-
-      {/* Gender */}
-      <TextInput
-        value={profile.gender}
-        onChangeText={(text) => handleChange("gender", text)}
-        placeholder="Gender"
-        style={styles.input}
-      />
-
-      {/* Social Media Links */}
-      <TextInput
-        value={profile.facebook}
-        onChangeText={(text) => handleChange("facebook", text)}
-        placeholder="Facebook"
-        style={styles.input}
-      />
-
-      <TextInput
-        value={profile.twitter}
-        onChangeText={(text) => handleChange("twitter", text)}
-        placeholder="Twitter"
-        style={styles.input}
-      />
-
-      <TextInput
-        value={profile.instagram}
-        onChangeText={(text) => handleChange("instagram", text)}
-        placeholder="Instagram"
-        style={styles.input}
-      />
-
-      <TextInput
-        value={profile.linkedin}
-        onChangeText={(text) => handleChange("linkedin", text)}
-        placeholder="LinkedIn"
-        style={styles.input}
-      />
-
-      <TextInput
-        value={profile.snapChat}
-        onChangeText={(text) => handleChange("snapChat", text)}
-        placeholder="Snapchat"
-        style={styles.input}
-      />
-
-      <TextInput
-        value={profile.whatsappNo}
-        onChangeText={(text) => handleChange("whatsappNo", text)}
-        placeholder="WhatsApp Number"
-        keyboardType="phone-pad"
-        style={styles.input}
-      />
-
-      {/* Submit Button */}
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Update Profile</Text>
       </TouchableOpacity>
@@ -176,10 +223,6 @@ const styles = {
     marginBottom: 10,
     fontSize: 16,
   },
-  textArea: {
-    height: 80,
-    textAlignVertical: "top",
-  },
   button: {
     backgroundColor: "#007bff",
     padding: 15,
@@ -191,5 +234,22 @@ const styles = {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  datePickerContainer: {
+    marginBottom: 10,
+  },
+  datePicker: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 10,
+  },
+  dateText: {
+    fontSize: 16,
+    marginLeft: 10,
+    color: "#333",
   },
 };
