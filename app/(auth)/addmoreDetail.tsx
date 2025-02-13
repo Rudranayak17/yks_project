@@ -137,7 +137,7 @@ const AddMoreDetail: React.FC = () => {
           <View style={styles.inputContainer}>
             {renderSocialInputs()}
 
-            <Text style={styles.label}>Are you a Member?</Text>
+            <Text style={styles.label}>Are you a Member of WSCC?</Text>
             <View style={styles.radioContainer}>
               {[
                 { label: "Yes", value: "Yes" },

@@ -44,7 +44,7 @@ export const authApiSlice = apiWithTag.injectEndpoints({
       query: (credential) => ({
         url: "/auth/send-otp",
         method: "POST",
-        params:credential,
+        params: credential,
         headers: {
           "Content-Type": "application/json",
         },
@@ -59,7 +59,7 @@ export const authApiSlice = apiWithTag.injectEndpoints({
         headers: {
           "Content-Type": "application/json",
         },
-        params:credential,
+        params: credential,
         // body: credential,
       }),
     }),
@@ -76,22 +76,24 @@ export const authApiSlice = apiWithTag.injectEndpoints({
     }),
 
     getMyProfile: builder.query<UserResponse, void>({
-      query: ({id}) => ({
+      query: ({ id }) => ({
         url: `/user/${id}`,
         method: "GET",
       }),
       providesTags: ["user"],
     }),
 
-    updateProfile: builder.mutation<UserResponse, User>({
-      query: (credential) => ({
-        url: "/api/v1/user/profile",
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: credential,
-      }),
+    updateProfilePic: builder.mutation<UserResponse, {userId: string, profile_pic: string}>({
+      query: (credential) => {
+        // Log the credential object
+        console.log('Update Profile Pic Credential:', credential);
+        
+        return {
+          url: `/user/update/profilePic/${credential.userId}`,
+          method: "PUT",
+          body: { profile_pic: credential.profile_pic }, 
+        };
+      },
       invalidatesTags: ["user"],
     }),
 
@@ -128,7 +130,7 @@ export const {
   useOtpVerifyMutation,
   useResetPasswordMutation,
   useGetMyProfileQuery,
-  useUpdateProfileMutation,
+  useUpdateProfilePicMutation,
   useVerifyEmailMutation,
   useSendContactMutation,
 } = authApiSlice;

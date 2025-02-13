@@ -9,6 +9,7 @@ import {
   Alert,
   Modal,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -19,37 +20,130 @@ import { showToast } from "@/utils/ShowToast";
 import { logout, selectCurrentUser } from "@/store/reducer/auth";
 import { useDispatch, useSelector } from "react-redux";
 import PostGrid from "@/components/PostGrid";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "@/utils/config";
+import { useUpdateProfilePicMutation } from "@/store/api/auth";
 
 const Profile = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal state
+  const [updateProfile] = useUpdateProfilePicMutation();
+  const [uploading, setUploading] = useState(false);
   const navigation = useRouter();
   const dispatch = useDispatch();
 
   const userdetail = useSelector(selectCurrentUser);
-  const handlePickImage = async () => {
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permissionResult.granted) {
-      Alert.alert(
-        "Permission Denied",
-        "You need to enable permissions to access the media library."
-      );
-      return;
+  const uploadImage = async (imageUri: string): Promise<string | null> => {
+    if (!imageUri) {
+      Alert.alert("No image selected", "Please select an image to upload.");
+      return null;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+    setUploading(true);
+    try {
+      console.log("Starting profile image upload...");
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
 
-    if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
+      const filename = `yks/profileimages/${
+        userdetail?.userId
+      }_${Date.now()}.jpg`;
+      const storageRef = ref(storage, filename);
+
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+      console.log("Uploading profile image...");
+
+      return new Promise((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`Upload progress: ${progress.toFixed(2)}%`);
+          },
+          (error) => {
+            console.error("Upload failed:", error);
+            Alert.alert(
+              "Upload failed",
+              "Something went wrong. Please try again."
+            );
+            setUploading(false);
+            reject(null);
+          },
+          async () => {
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            console.log("Profile image successfully uploaded. URL:", url);
+            setUploading(false);
+            resolve(url);
+          }
+        );
+      });
+    } catch (error) {
+      console.error("Upload error:", error);
+      Alert.alert("Upload failed", "Something went wrong. Please try again.");
+      setUploading(false);
+      return null;
     }
   };
 
+  const handlePickImage = async () => {
+    try {
+      const permissionResult =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permissionResult.granted) {
+        Alert.alert(
+          "Permission Denied",
+          "You need to enable permissions to access the media library."
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        try {
+          const imageUrl = await uploadImage(result.assets[0].uri);
+          console.log({ userId: userdetail?.userId, profile_pic: imageUrl });
+          if (imageUrl) {
+            setProfileImage(imageUrl);
+
+            try {
+              console.log("dasd", imageUrl);
+              const resp = await updateProfile({
+                userId: userdetail?.userId,
+                profile_pic: imageUrl,
+              }).unwrap();
+              console.log("Final Profile Image URL:", resp);
+            } catch (profileUpdateError) {
+              console.error("Error updating profile:", profileUpdateError);
+              Alert.alert(
+                "Update Failed",
+                "Failed to update profile. Please try again later."
+              );
+            }
+          }
+        } catch (uploadError) {
+          console.error("Error uploading image:", uploadError);
+          Alert.alert(
+            "Upload Failed",
+            "Failed to upload image. Please try again later."
+          );
+          setProfileImage(null);
+        }
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
+      Alert.alert(
+        "Error",
+        "An error occurred while accessing the image library. Please try again."
+      );
+    }
+  };
   const handleLogout = () => {
     // Perform the logout action (e.g., clearing tokens or resetting state)
     dispatch(logout());
@@ -71,13 +165,21 @@ const Profile = () => {
           >
             <View style={styles.centerLine}></View>
             <View style={styles.circularView}>
-              {profileImage ? (
+            {uploading ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="large" color="#002146" />
+                  <Text style={styles.loadingText}>Uploading...</Text>
+                </View>
+              ) : profileImage ? (
                 <Image
                   source={{ uri: profileImage }}
                   style={styles.profileImage}
                 />
               ) : (
-                <Text style={styles.defaultText}>+</Text>
+                <Image
+                  source={{ uri: userdetail?.userProfilePic }}
+                  style={styles.profileImage}
+                />
               )}
             </View>
             <View style={styles.cameraIcon}>
@@ -167,10 +269,24 @@ const styles = StyleSheet.create({
   content: {
     gap: 15,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+  },
+  loadingText: {
+    marginTop: 10,
+    color: "#002146",
+    fontSize: 14,
+    fontWeight: "500",
+  },
   circularViewContainer: {
     justifyContent: "center",
-    marginLeft: 10,
-    position: "relative",
+    // marginLeft: 10,
+    // position: "relative",
+    // borderWidth: 1,
+    alignSelf: "flex-start",
   },
   centerLine: {
     width: "100%",
