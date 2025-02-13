@@ -36,7 +36,7 @@ const Profile = () => {
       // setPost(data)
       setPost(data.CONTENT);
     }
-  }, [isLoading]);
+  }, [isLoading, data]);
 
   const uploadImage = async (imageUri) => {
     if (!imageUri) {

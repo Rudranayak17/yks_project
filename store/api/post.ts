@@ -18,12 +18,16 @@ export const postApiSlice = apiWithTag.injectEndpoints({
           content: credentials.content,
           postImage: credentials.postImage,
         },
+        
       }),
+      invalidatesTags: ["post"],
     }),
     getAllPost: builder.query({
       query: (credentails) => ({
         url: `/post/all/${credentails.id}`,
       }),
+      keepUnusedDataFor:0,
+      providesTags:["post"]
     }),
   }),
   overrideExisting: true,

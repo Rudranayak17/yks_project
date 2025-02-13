@@ -19,18 +19,10 @@ const ProfileImage = ({
   onPress,
   onBannerPress,
 }) => {
-  console.log("dasdsd",userProfilePic, userbanner);
+  console.log("dasdsd", userProfilePic, userbanner);
   return (
     <View style={styles.container}>
       <Pressable style={styles.bannerContainer} onPress={onBannerPress}>
-        {/* <Image
-          source={
-            bannerImage
-              ? { uri: bannerImage }
-              : "https://plus.unsplash.com/premium_photo-1701767501250-fda0c8f7907f?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmFubmVyJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D"
-          }
-          style={styles.bannerImage}
-        /> */}
         {bannerImage ? (
           <Image source={{ uri: bannerImage }} style={styles.bannerImage} />
         ) : (
