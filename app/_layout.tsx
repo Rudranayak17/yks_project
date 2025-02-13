@@ -27,6 +27,7 @@ import {
 import { useGetMyProfileQuery } from "@/store/api/auth";
 import { store } from "@/store/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -85,11 +86,13 @@ export default function RootLayout() {
   }
 
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <Provider store={store}>
       <RootSiblingParent>
         <StackLayout />
         <StatusBar style="light" />
       </RootSiblingParent>
     </Provider>
+    </GestureHandlerRootView>
   );
 }
