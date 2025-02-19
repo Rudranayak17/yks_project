@@ -27,6 +27,10 @@ const _layout = () => {
         options={{ headerShown: true, headerTitle: "Edit Profile" }}
       />
       <Stack.Screen
+        name="editPost"
+        options={{ headerShown: true, headerTitle: "Edit Post" }}
+      />
+      <Stack.Screen
         name="allPost"
         options={{ headerShown: true, headerTitle: "All post " }}
       />
