@@ -1,26 +1,41 @@
-// screens/UserList.tsx
-import React, { useState } from "react";
-import { View, StyleSheet, FlatList, Modal, Text, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Modal,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import UserCard from "@/components/UserCard";
+import {
+  useDisableUserByIDMutation,
+  useGetuserBysocietyQuery,
+} from "@/store/api/auth";
+import { selectCurrentUser } from "@/store/reducer/auth";
+import { useSelector } from "react-redux";
 
 interface User {
   id: number;
-  name: string;
+  fullName: string;
   gender: string;
 }
 
 const UserList: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([
-    { id: 1, name: "Ramesh Yadav", gender: "Male" },
-    { id: 2, name: "Sunidhi Amrash", gender: "Female" },
-    { id: 3, name: "Ramesh Yadav", gender: "Male" },
-    { id: 4, name: "Sunidhi Amrash", gender: "Female" },
-  ]);
-
+  const userDetail = useSelector(selectCurrentUser);
+  const [disableUser] = useDisableUserByIDMutation();
+  const { data, isLoading } = useGetuserBysocietyQuery({ id: userDetail.societyId });
+  const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleDelete = (id: number): void => {
+  useEffect(() => {
+    if (data?.CONTENT) {
+      setUsers(data.CONTENT);
+    }
+  }, [data]);
+
+  const handleDelete = async (id: number) => {
     const userToDelete = users.find((user) => user.id === id);
     if (userToDelete) {
       setSelectedUser(userToDelete);
@@ -28,26 +43,28 @@ const UserList: React.FC = () => {
     }
   };
 
-  const confirmDelete = (): void => {
+  const confirmDelete = async () => {
     if (selectedUser) {
-      console.log(`User with id ${selectedUser.id} deleted`);
-      setUsers((prev) => prev.filter((user) => user.id !== selectedUser.id));
-      setSelectedUser(null);
-      setIsModalVisible(false);
+      try {
+        const resp=await disableUser({ id: selectedUser.id }).unwrap();
+        console.log(resp)
+       
+      } catch (error) {
+        console.error("Error disabling user:", error);
+      } finally {
+        setSelectedUser(null);
+        setIsModalVisible(false);
+      }
     }
   };
 
-  const cancelDelete = (): void => {
+  const cancelDelete = () => {
     setSelectedUser(null);
     setIsModalVisible(false);
   };
 
   const renderItem = ({ item }: { item: User }) => (
-    <UserCard
-      name={item.name}
-      gender={item.gender}
-      onDelete={() => handleDelete(item.id)}
-    />
+    <UserCard name={item.fullName} gender={item.gender} onDelete={() => handleDelete(item.id)} />
   );
 
   return (
@@ -60,16 +77,11 @@ const UserList: React.FC = () => {
       />
 
       {/* Modal for Delete Confirmation */}
-      <Modal
-        visible={isModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={cancelDelete}
-      >
+      <Modal visible={isModalVisible} transparent animationType="fade" onRequestClose={cancelDelete}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalText}>
-              Are you sure you want to delete {selectedUser?.name}?
+              Are you sure you want to disable {selectedUser?.fullName}?
             </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity onPress={confirmDelete} style={styles.buttonConfirm}>

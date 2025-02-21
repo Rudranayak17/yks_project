@@ -24,9 +24,9 @@ const RequestCard: React.FC<RequestCardProps> = ({ title, name, gender, onApprov
         <TouchableOpacity style={styles.approveButton} onPress={onApprove}>
           <Text style={styles.buttonText}>Approve</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.disapproveButton} onPress={onDisapprove}>
+        {/* <TouchableOpacity style={styles.disapproveButton} onPress={onDisapprove}>
           <Text style={styles.buttonText}>Disapprove</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

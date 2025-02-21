@@ -17,7 +17,7 @@ const UserCard: React.FC<UserCardProps> = ({ name, gender, onDelete }) => {
         <Text style={styles.gender}>Gender: {gender}</Text>
       </View>
       <TouchableOpacity style={styles.button} onPress={onDelete}>
-        <Text style={styles.buttonText}>Delete User</Text>
+        <Text style={styles.buttonText}>Disable User</Text>
       </TouchableOpacity>
     </View>
   );

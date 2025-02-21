@@ -3,8 +3,12 @@ import React from 'react'
 
 const excelID = () => {
   return (
-    <View>
-      <Text>excelID</Text>
+    <View style={{
+      flex:1,
+      justifyContent:"center",
+      alignItems:"center"
+    }}>
+      <Text>Upcoming Soon</Text>
     </View>
   )
 }

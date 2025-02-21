@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -6,10 +6,17 @@ import {
   Text,
   TouchableOpacity,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import RequestCard from "@/components/RequestCard";
 import { useRouter } from "expo-router";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "@/store/reducer/auth";
+import {
+  useEnableUserByIDMutation,
+  useGetAllrequestQuery,
+} from "@/store/api/auth";
 
 interface Request {
   id: string;
@@ -19,52 +26,39 @@ interface Request {
 }
 
 const UserRequest: React.FC = () => {
+  const userDetail = useSelector(selectCurrentUser);
+  const { data, isLoading, isError } = useGetAllrequestQuery({
+    id: userDetail.societyId,
+  });
   const router = useRouter();
-  const [requests, setRequests] = useState<Request[]>([
-    {
-      id: "1",
-      title: "Request for post approval",
-      name: "Shoiba Ali Muhammad",
-      gender: "Female",
-    },
-    {
-      id: "2",
-      title: "Request for Account Verification",
-      name: "Pawan Jadhav",
-      gender: "Male",
-    },
-    {
-      id: "3",
-      title: "Request for post approval",
-      name: "Shoiba Ali Muhammad",
-      gender: "Female",
-    },
-    {
-      id: "4",
-      title: "Request for Account Verification",
-      name: "Pawan Jadhav",
-      gender: "Male",
-    },
-  ]);
-
+  const [requests, setRequests] = useState<Request[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [enableAccount] = useEnableUserByIDMutation();
+  useEffect(() => {
+    if (data) {
+      const { CONTENT } = data;
+      setRequests(CONTENT);
+    }
+  }, [data]);
 
-  const handleApprove = (id: string): void => {
-    console.log(`Approved request ${id}`);
-  };
-
-  const handleDisapprove = (id: string): void => {
-    const requestToDisapprove = requests.find((request) => request.id === id);
-    if (requestToDisapprove) {
-      setSelectedRequest(requestToDisapprove);
-      setIsModalVisible(true);
+  const handleApprove = async (id: string) => {
+    if (id) {
+      try {
+        const resp = await enableAccount({ id: id }).unwrap();
+        console.log(resp);
+      } catch (error) {
+        console.error("Error disabling user:", error);
+      } finally {
+        setIsModalVisible(false);
+      }
     }
   };
 
-  const confirmDisapprove = (): void => {
+  const confirmApprove = (): void => {
     if (selectedRequest) {
-      console.log(`Disapproved request ${selectedRequest.id}`);
+      console.log(`Approved request ${selectedRequest.id}`);
+      // Here you would typically make an API call to approve the request
       setRequests((prev) =>
         prev.filter((request) => request.id !== selectedRequest.id)
       );
@@ -73,10 +67,29 @@ const UserRequest: React.FC = () => {
     }
   };
 
-  const cancelDisapprove = (): void => {
+  const cancelApprove = (): void => {
     setIsModalVisible(false);
     setSelectedRequest(null);
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text style={styles.loaderText}>Loading requests...</Text>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>
+          Error loading requests. Please try again.
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -89,43 +102,42 @@ const UserRequest: React.FC = () => {
             onPress={() =>
               router.push({
                 pathname: `/userRequest/${item.id}`,
-                params: { data: item },
+                params: item,
               })
             }
           >
             <RequestCard
-              title={item.title}
-              name={item.name}
+              title={"Request for Account Verification"}
+              name={item.fullName}
               gender={item.gender}
               onApprove={() => handleApprove(item.id)}
-              onDisapprove={() => handleDisapprove(item.id)}
             />
           </Pressable>
         )}
       />
 
-      {/* Modal for Disapproval Confirmation */}
+      {/* Modal for Approval Confirmation */}
       <Modal
         visible={isModalVisible}
         transparent
         animationType="fade"
-        onRequestClose={cancelDisapprove}
+        onRequestClose={cancelApprove}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalText}>
-              Are you sure you want to disapprove this request?
+              Do you really want to approve this request?
             </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                onPress={confirmDisapprove}
+                onPress={confirmApprove}
                 style={styles.buttonApprove}
               >
                 <Text style={styles.buttonText}>Yes</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={cancelDisapprove}
-                style={styles.buttonDisapprove}
+                onPress={cancelApprove}
+                style={styles.buttonCancel}
               >
                 <Text style={styles.buttonText}>No</Text>
               </TouchableOpacity>
@@ -144,6 +156,29 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: "#f5f5f5",
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
+  },
+  loaderText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#666",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#d9534f",
+    textAlign: "center",
   },
   modalOverlay: {
     flex: 1,
@@ -174,14 +209,14 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   buttonApprove: {
-    backgroundColor: "#d9534f",
+    backgroundColor: "#5cb85c",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     marginRight: 10,
   },
-  buttonDisapprove: {
-    backgroundColor: "#5cb85c",
+  buttonCancel: {
+    backgroundColor: "#d9534f",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,

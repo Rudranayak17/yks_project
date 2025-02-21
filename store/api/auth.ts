@@ -11,7 +11,7 @@ import { apiSlice } from "../initalState";
 
 import { contact, User, UserProfile } from "../../types/user";
 const apiWithTag = apiSlice.enhanceEndpoints({
-  addTagTypes: ["user", "admin-user", "product", "order", "request", "society"],
+  addTagTypes: ["user", "admin-user", "product", "order", "admin", "society"],
 });
 
 export const authApiSlice = apiWithTag.injectEndpoints({
@@ -34,10 +34,10 @@ export const authApiSlice = apiWithTag.injectEndpoints({
         headers: {
           "Content-Type": "application/json",
         },
-        
+
         body: credentials,
       }),
-      invalidatesTags:["society"]
+      invalidatesTags: ["society"],
     }),
 
     // Signup Endpoint
@@ -102,7 +102,42 @@ export const authApiSlice = apiWithTag.injectEndpoints({
       keepUnusedDataFor: 0,
       providesTags: ["society"],
     }),
-
+    getAllrequest: builder.query<UserResponse, void>({
+      query: ({ id }) => ({
+        url: `admin/disable/user/${id}`,
+        method: "GET",
+      }),
+      keepUnusedDataFor: 0,
+      providesTags: ["admin"],
+    }),
+    getuserBysociety: builder.query<UserResponse, void>({
+      query: ({ id }) => ({
+        url: `user/society/${id}`,
+        method: "GET",
+      }),
+      keepUnusedDataFor: 0,
+      providesTags: ["admin"],
+    }),
+    disableUserByID: builder.mutation({
+      query: ({ id }) => ({
+        url: `admin/disable/user/${id}`,
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["admin"],
+    }),
+    enableUserByID: builder.mutation({
+      query: ({ id }) => ({
+        url: `admin/enable/user/${id}`,
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["admin"],
+    }),
     updateProfile: builder.mutation<UserResponse, any>({
       query: (credential) => {
         // Log the credential object
@@ -206,6 +241,7 @@ export const authApiSlice = apiWithTag.injectEndpoints({
 
 export const {
   useLoginMutation,
+  useEnableUserByIDMutation,
   useRegistrationMutation,
   useForgetPasswordMutation,
   useOtpVerifyMutation,
@@ -217,5 +253,8 @@ export const {
   useUpdateBannerPicMutation,
   useUpdateProfileMutation,
   useGetAllSocietyQuery,
-  useCreateSocietyMutation
+  useCreateSocietyMutation,
+  useGetAllrequestQuery,
+  useGetuserBysocietyQuery,
+  useDisableUserByIDMutation
 } = authApiSlice;
