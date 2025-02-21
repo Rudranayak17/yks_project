@@ -28,10 +28,11 @@ const AllPost = () => {
   // console.log(commentsData)
   const [allPost, setAllPost] = useState([]);
   useEffect(() => {
-    if (data) {
+    if (data?.CONTENT && JSON.stringify(data.CONTENT) !== JSON.stringify(allPost)) {
       setAllPost(data.CONTENT);
     }
-  }, [data]);
+  }, [data, allPost]);
+  
 
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);

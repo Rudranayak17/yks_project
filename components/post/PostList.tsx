@@ -1,5 +1,6 @@
 import React from "react";
-import { FlatList, View, Text, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import PostItem from "./PostItem";
 
 interface PostListProps {
@@ -38,7 +39,7 @@ const PostList: React.FC<PostListProps> = ({
   }
 
   return (
-    <FlatList
+    <FlashList
       data={posts}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
@@ -50,6 +51,7 @@ const PostList: React.FC<PostListProps> = ({
           openComments={openComments}
         />
       )}
+      estimatedItemSize={100} // Adjust based on your item height
       refreshing={isLoading}
       onRefresh={refetch}
     />

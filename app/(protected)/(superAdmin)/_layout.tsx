@@ -39,6 +39,20 @@ const _layout = () => {
         }}
       />
       <Stack.Screen
+        name="create-society/index"
+        options={{
+          headerShown: true,
+          title: "create-society",
+          headerTitleStyle: {
+            color: "#ffff",
+          },
+          headerTintColor: "#ffff", // Sets the back arrow color to white
+          headerStyle: {
+            backgroundColor: "#002146",
+          },
+        }}
+      />
+      <Stack.Screen
         name="chat/[id]"
         options={{
           headerShown: true,
@@ -80,7 +94,7 @@ const _layout = () => {
           },
         }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="addUser/[id]"
         options={{
           headerShown: true,

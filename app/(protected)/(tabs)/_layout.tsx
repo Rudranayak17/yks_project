@@ -16,7 +16,7 @@ export default function TabLayout() {
   const navigation = useRouter();
   const user = useSelector(selectCurrentUser);
   const isLoading = useSelector(selectCurrentLoading);
-  console.log(user?.userRole);
+  console.log("role", user?.userRole);
   return (
     <Tabs
       screenOptions={{
@@ -50,7 +50,8 @@ export default function TabLayout() {
             height: 60,
           },
         }),
-        headerRight: () => {if (user?.userRole === "ROLE_SUPER_ADMIN") return null;
+        headerRight: () => {
+          if (user?.userRole === "ROLE_SUPER_ADMIN") return null;
           return (
             <TouchableOpacity
               style={{ marginRight: 15 }}
@@ -58,7 +59,8 @@ export default function TabLayout() {
             >
               <Entypo name="chat" size={24} color="white" />
             </TouchableOpacity>
-          );},
+          );
+        },
       }}
     >
       <Tabs.Screen
@@ -85,7 +87,7 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="create"
-        redirect={!isLoading && user?.userRole !== "ROLE_USER"}
+        redirect={!isLoading && user?.userRole === "ROLE_ADMIN"}
         options={{
           title: "Create",
           tabBarIcon: ({ color }) => (
@@ -93,6 +95,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="approve"
         redirect={!isLoading && user?.userRole !== "ROLE_ADMIN"}
@@ -106,7 +109,7 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="profile"
-        redirect={!isLoading && user?.userRole === "ROLE_SUPER_ADMIN"}
+     
         options={{
           title: "My Profile",
           tabBarIcon: ({ color }) => (

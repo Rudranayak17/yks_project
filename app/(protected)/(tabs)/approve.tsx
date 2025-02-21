@@ -1,10 +1,14 @@
+import { selectCurrentUser } from "@/store/reducer/auth";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
 
 const ApproveScreen = () => {
   const router = useRouter();
+  const userDetail=useSelector(selectCurrentUser)
+  console.log(userDetail)
   return (
     <View style={styles.container}>
       <View style={styles.cardContainer}>

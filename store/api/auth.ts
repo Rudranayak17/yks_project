@@ -11,7 +11,7 @@ import { apiSlice } from "../initalState";
 
 import { contact, User, UserProfile } from "../../types/user";
 const apiWithTag = apiSlice.enhanceEndpoints({
-  addTagTypes: ["user", "admin-user", "product", "order"],
+  addTagTypes: ["user", "admin-user", "product", "order", "request", "society"],
 });
 
 export const authApiSlice = apiWithTag.injectEndpoints({
@@ -26,6 +26,18 @@ export const authApiSlice = apiWithTag.injectEndpoints({
         },
         body: credentials,
       }),
+    }),
+    createSociety: builder.mutation({
+      query: (credentials) => ({
+        url: "/society/create",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        
+        body: credentials,
+      }),
+      invalidatesTags:["society"]
     }),
 
     // Signup Endpoint
@@ -81,6 +93,14 @@ export const authApiSlice = apiWithTag.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["user"],
+    }),
+    getAllSociety: builder.query<UserResponse, void>({
+      query: () => ({
+        url: `society/all`,
+        method: "GET",
+      }),
+      keepUnusedDataFor: 0,
+      providesTags: ["society"],
     }),
 
     updateProfile: builder.mutation<UserResponse, any>({
@@ -195,5 +215,7 @@ export const {
   useVerifyEmailMutation,
   useSendContactMutation,
   useUpdateBannerPicMutation,
-  useUpdateProfileMutation
+  useUpdateProfileMutation,
+  useGetAllSocietyQuery,
+  useCreateSocietyMutation
 } = authApiSlice;

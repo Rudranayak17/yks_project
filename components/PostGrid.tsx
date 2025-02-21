@@ -22,6 +22,7 @@ const PostGrid: React.FC<PostGridProps> = ({ posts }) => {
         keyExtractor={(item) => item.id}
         numColumns={3}
         estimatedItemSize={110}
+        contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => router.navigate({ pathname: "/allPost", params: item })}
@@ -37,6 +38,10 @@ const PostGrid: React.FC<PostGridProps> = ({ posts }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  listContainer: {
+    // You can apply any additional styling here
+    padding: 4,
   },
   gridImage: {
     width: 110,

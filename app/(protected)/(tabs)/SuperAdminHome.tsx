@@ -1,168 +1,128 @@
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Modal,
-  Alert,
-} from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { useGetAllSocietyQuery } from "@/store/api/auth";
+import { Entypo, FontAwesome6 } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 
-const SuperAdminHome = () => {
-  const [isModalVisible, setModalVisible] = useState(false);
+const SocietyList = () => {
+  const { data, isLoading, isError } = useGetAllSocietyQuery();
   const router = useRouter();
+  const [society, setSociety] = useState();
 
-  const handleLogout = () => {
-    console.log("Logging out...");
-    setModalVisible(false); // Close the modal
-    router.replace("/(auth)"); // Navigate to the login screen
-  };
+  useEffect(() => {
+    if (data) {
+      const { CONTENT } = data;
+      console.log(CONTENT);
+      setSociety(CONTENT);
+    }
+  }, [data]);
+
+  const societies = [
+    { id: "1", name: "Society Alpha", admins: 4, users: 25 },
+    { id: "2", name: "Society Beta", admins: 3, users: 18 },
+    { id: "3", name: "Society Gamma", admins: 5, users: 30 },
+    { id: "4", name: "Society Delta", admins: 2, users: 10 },
+    { id: "5", name: "Society Epsilon", admins: 4, users: 25 },
+  ];
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => router.navigate(`/society/${item.id}`)}
+    >
+      <View style={styles.avatar}>
+        <Text style={styles.avatarText}>{item.name}</Text>
+      </View>
+      <View style={styles.info}>
+        <Text style={styles.title}>{item.name}</Text>
+        <Text style={styles.subtitle}>owner: {item.owner}</Text>
+      </View>
+      <Entypo name="chevron-right" size={30} color="black" />
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
-      {/* Row of Buttons */}
-      <View style={styles.row}>
-        <TouchableOpacity style={styles.card}>
-          <FontAwesome5 name="image" size={40} color="white" />
-          <Text style={styles.cardText}>Add Post</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => router.navigate("/society")}
-        >
-          <FontAwesome5 name="users" size={40} color="white" />
-          <Text style={styles.cardText}>Add Society</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* See Requests Button */}
-      <TouchableOpacity style={styles.requestButton}>
-        <Text style={styles.requestButtonText}>See Requests</Text>
-      </TouchableOpacity>
-
-      {/* Logout Button */}
+      <FlatList
+        data={society}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+      />
       <TouchableOpacity
-        style={styles.logoutButton}
-        onPress={() => setModalVisible(true)}
+        style={styles.fab}
+        onPress={() => router.navigate("/create-society")}
       >
-        <FontAwesome5 name="sign-out-alt" size={20} color="white" style={styles.logoutIcon} />
-        <Text style={styles.logoutButtonText}>Logout</Text>
+        <FontAwesome6 name="add" size={30} color="black" />
       </TouchableOpacity>
-
-      {/* Logout Confirmation Modal */}
-      <Modal
-        transparent={true}
-        animationType="fade"
-        visible={isModalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Confirm Logout</Text>
-            <Text style={styles.modalText}>Are you sure you want to log out?</Text>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.confirmButton}
-                onPress={handleLogout}
-              >
-                <Text style={styles.confirmButtonText}>Logout</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 };
 
-export default SuperAdminHome;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-    paddingHorizontal: 20,
+    backgroundColor: "#f5f5f5",
+    padding: 10,
   },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 30,
+  list: {
+    paddingBottom: 80, // Ensure spacing for the FAB
   },
   card: {
-    backgroundColor: "#0a2849",
-    padding: 20,
-    borderRadius: 10,
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 10,
-    width: 130,
-    height: 130,
+    backgroundColor: "#ffffff",
+    borderRadius: 10,
+    padding: 10,
+    marginVertical: 5,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 2, // For Android shadow
   },
-  cardText: {
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#a6b1e1",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+  },
+  avatarText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
-    marginTop: 10,
-    textAlign: "center",
   },
-  requestButton: {
-    backgroundColor: "#ffffff",
-    borderWidth: 2,
-    borderColor: "#0a2849",
-    borderRadius: 8,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    marginTop: 20,
-  },
-  requestButtonText: {
-    color: "#0a2849",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  logoutButton: {
-    position: "absolute",
-    bottom: 30,
-    backgroundColor: "#FF3B30",
-    borderRadius: 8,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  logoutIcon: {
-    marginRight: 10,
-  },
-  logoutButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  modalOverlay: {
+  info: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
   },
-  modalContainer: {
-    backgroundColor: "#fff",
-    width: 300,
-    borderRadius: 10,
-    padding: 20,
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 2,
+  },
+  fab: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    backgroundColor: "#007BFF",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
     shadowOpacity: 0.3,
@@ -170,43 +130,6 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
-  },
-  modalText: {
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  cancelButton: {
-    backgroundColor: "#ccc",
-    padding: 10,
-    borderRadius: 5,
-    width: "45%",
-    alignItems: "center",
-  },
-  cancelButtonText: {
-    color: "#333",
-    fontSize: 16,
-  },
-  confirmButton: {
-    backgroundColor: "#FF3B30",
-    padding: 10,
-    borderRadius: 5,
-    width: "45%",
-    alignItems: "center",
-  },
-  confirmButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
 });
+
+export default SocietyList;
